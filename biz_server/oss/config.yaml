@@ -1,0 +1,8 @@
+name: 'oss'
+log:
+  dir: "/home/work/log/"
+  debug: false
+consul:
+  host: '127.0.0.1'
+  port: 8500
+  key: 'service/oss'

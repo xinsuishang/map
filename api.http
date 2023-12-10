@@ -1,0 +1,18 @@
+###
+POST http://localhost:8080/gateway/mtop/weight/manage/upload
+Content-Type: application/json
+
+{
+  "body": {
+    "weight": 86.4,
+    "fileName": "/Users/danggui/Downloads/IMG_7200",
+    "remoteName": "20231210.JPG",
+    "forceUpload": false,
+    "dateTime": "2023-12-10"
+  }
+}
+### 健康检查接口
+GET http://localhost:8080/ping
+
+### 获取gateway接口列表
+GET http://localhost:8080/gateway/mtop/api/list
