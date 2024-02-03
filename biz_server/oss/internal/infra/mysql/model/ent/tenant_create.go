@@ -78,6 +78,12 @@ func (tc *TenantCreate) SetSecretKey(s string) *TenantCreate {
 	return tc
 }
 
+// SetDesc sets the "desc" field.
+func (tc *TenantCreate) SetDesc(s string) *TenantCreate {
+	tc.mutation.SetDesc(s)
+	return tc
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (tc *TenantCreate) Mutation() *TenantMutation {
 	return tc.mutation
@@ -146,6 +152,9 @@ func (tc *TenantCreate) check() error {
 	if _, ok := tc.mutation.SecretKey(); !ok {
 		return &ValidationError{Name: "secret_key", err: errors.New(`ent: missing required field "Tenant.secret_key"`)}
 	}
+	if _, ok := tc.mutation.Desc(); !ok {
+		return &ValidationError{Name: "desc", err: errors.New(`ent: missing required field "Tenant.desc"`)}
+	}
 	return nil
 }
 
@@ -199,6 +208,10 @@ func (tc *TenantCreate) createSpec() (*Tenant, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.SecretKey(); ok {
 		_spec.SetField(tenant.FieldSecretKey, field.TypeString, value)
 		_node.SecretKey = value
+	}
+	if value, ok := tc.mutation.Desc(); ok {
+		_spec.SetField(tenant.FieldDesc, field.TypeString, value)
+		_node.Desc = value
 	}
 	return _node, _spec
 }

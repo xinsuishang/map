@@ -8,6 +8,7 @@ import (
 	"msp/biz_server/oss/internal/infra/notion"
 	"msp/biz_server/oss/internal/infra/notion/model"
 	"msp/biz_server/oss/internal/usecase"
+	"msp/common/model/errors"
 )
 
 type NotionUploadService struct {
@@ -31,17 +32,20 @@ func (s *NotionUploadService) Run(req *oss.NotionUploadRequest) (resp *common.Em
 	err = req.IsValid()
 	if err != nil {
 		klog.CtxWarnf(s.ctx, "NotionUploadService Run req valid err %+v", err)
+		err = errors.NewErrNo(errors.ParamErrCode, err.Error())
 		return
 	}
 	resp = common.NewEmptyResponse()
 	mapping, err := s.repository.GetDomainMapping(s.ctx, req.GetDomainId())
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "OssUploadService Run mapping err: %+v", err)
+		err = errors.NewErrNo(errors.ServiceErrCode, err.Error())
 		return
 	}
 	tenant, err := s.repository.GetTenantsById(s.ctx, mapping.TenantID)
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "OssUploadService Run tenant err: %+v", err)
+		err = errors.NewErrNo(errors.ServiceErrCode, err.Error())
 		return
 	}
 	dataMap := make(map[string]model.PropertyData)
@@ -54,6 +58,7 @@ func (s *NotionUploadService) Run(req *oss.NotionUploadRequest) (resp *common.Em
 	err = s.notionRepository.AddPageToDatabase(tenant.SecretKey, mapping.BucketName, dataMap)
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "OssUploadService Run AddPageToDatabase err: %+v", err)
+		err = errors.NewErrNo(errors.ServiceErrCode, err.Error())
 	}
 	return
 }

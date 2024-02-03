@@ -8,12 +8,13 @@ import (
 	"github.com/hashicorp/consul/api"
 	consul "github.com/kitex-contrib/registry-consul"
 	"msp/biz_server/oss/config"
+	"msp/common/constant"
 	"net"
 	"strconv"
 )
 
 // InitRegistry to init consul
-func InitRegistry(Port int) (registry.Registry, *registry.Info) {
+func InitRegistry(port int, group, version string) (registry.Registry, *registry.Info) {
 	r, err := consul.NewConsulRegister(net.JoinHostPort(
 		config.GlobalLocalConfig.ConsulConfig.Host,
 		strconv.Itoa(config.GlobalLocalConfig.ConsulConfig.Port)),
@@ -33,9 +34,11 @@ func InitRegistry(Port int) (registry.Registry, *registry.Info) {
 	}
 	info := &registry.Info{
 		ServiceName: config.GlobalServerConfig.Name,
-		Addr:        utils.NewNetAddr("tcp", net.JoinHostPort(config.GlobalServerConfig.Host, strconv.Itoa(Port))),
+		Addr:        utils.NewNetAddr("tcp", net.JoinHostPort(config.GlobalServerConfig.Host, strconv.Itoa(port))),
 		Tags: map[string]string{
-			"ID": sf.Generate().Base36(),
+			"ID":             sf.Generate().Base36(),
+			constant.Group:   group,
+			constant.Version: version,
 		},
 	}
 	return r, info

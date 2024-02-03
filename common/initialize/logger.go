@@ -4,16 +4,15 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 	kitexlogrus "github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"msp/biz_server/oss/config"
+	"msp/common/model/config"
 	"os"
 	"path"
 	"time"
 )
 
-func InitLogger() {
+func InitLogger(logConfig *config.LogConfig, logName string, isDev bool) {
 	// Customizable output directory.
-	logConfig := config.GlobalLocalConfig.LogConfig
-	logFilePath := path.Join(logConfig.LogDir, config.GlobalLocalConfig.Name)
+	logFilePath := path.Join(logConfig.LogDir, logName)
 	if err := os.MkdirAll(logFilePath, 0o777); err != nil {
 		panic(err)
 	}
@@ -39,7 +38,7 @@ func InitLogger() {
 		Compress:   true, // Compress with gzip.
 	}
 
-	if logConfig.LogDebug || config.IsDev {
+	if logConfig.LogDebug || isDev {
 		logger.SetLevel(klog.LevelDebug)
 	} else {
 		logger.SetLevel(klog.LevelWarn)

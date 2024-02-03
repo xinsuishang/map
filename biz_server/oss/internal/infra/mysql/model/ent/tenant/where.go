@@ -89,6 +89,11 @@ func SecretKey(v string) predicate.Tenant {
 	return predicate.Tenant(sql.FieldEQ(FieldSecretKey, v))
 }
 
+// Desc applies equality check predicate on the "desc" field. It's identical to DescEQ.
+func Desc(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldEQ(FieldDesc, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Tenant {
 	return predicate.Tenant(sql.FieldEQ(FieldCreatedAt, v))
@@ -437,6 +442,71 @@ func SecretKeyEqualFold(v string) predicate.Tenant {
 // SecretKeyContainsFold applies the ContainsFold predicate on the "secret_key" field.
 func SecretKeyContainsFold(v string) predicate.Tenant {
 	return predicate.Tenant(sql.FieldContainsFold(FieldSecretKey, v))
+}
+
+// DescEQ applies the EQ predicate on the "desc" field.
+func DescEQ(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldEQ(FieldDesc, v))
+}
+
+// DescNEQ applies the NEQ predicate on the "desc" field.
+func DescNEQ(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldNEQ(FieldDesc, v))
+}
+
+// DescIn applies the In predicate on the "desc" field.
+func DescIn(vs ...string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldIn(FieldDesc, vs...))
+}
+
+// DescNotIn applies the NotIn predicate on the "desc" field.
+func DescNotIn(vs ...string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldNotIn(FieldDesc, vs...))
+}
+
+// DescGT applies the GT predicate on the "desc" field.
+func DescGT(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldGT(FieldDesc, v))
+}
+
+// DescGTE applies the GTE predicate on the "desc" field.
+func DescGTE(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldGTE(FieldDesc, v))
+}
+
+// DescLT applies the LT predicate on the "desc" field.
+func DescLT(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldLT(FieldDesc, v))
+}
+
+// DescLTE applies the LTE predicate on the "desc" field.
+func DescLTE(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldLTE(FieldDesc, v))
+}
+
+// DescContains applies the Contains predicate on the "desc" field.
+func DescContains(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldContains(FieldDesc, v))
+}
+
+// DescHasPrefix applies the HasPrefix predicate on the "desc" field.
+func DescHasPrefix(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldHasPrefix(FieldDesc, v))
+}
+
+// DescHasSuffix applies the HasSuffix predicate on the "desc" field.
+func DescHasSuffix(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldHasSuffix(FieldDesc, v))
+}
+
+// DescEqualFold applies the EqualFold predicate on the "desc" field.
+func DescEqualFold(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldEqualFold(FieldDesc, v))
+}
+
+// DescContainsFold applies the ContainsFold predicate on the "desc" field.
+func DescContainsFold(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldContainsFold(FieldDesc, v))
 }
 
 // And groups predicates with the AND operator between them.

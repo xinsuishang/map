@@ -7,4 +7,5 @@ type TenantEntity struct {
 	Type      string
 	AccessKey string
 	SecretKey string
+	Desc      string
 }

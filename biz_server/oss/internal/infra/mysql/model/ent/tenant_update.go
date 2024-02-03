@@ -104,6 +104,20 @@ func (tu *TenantUpdate) SetNillableSecretKey(s *string) *TenantUpdate {
 	return tu
 }
 
+// SetDesc sets the "desc" field.
+func (tu *TenantUpdate) SetDesc(s string) *TenantUpdate {
+	tu.mutation.SetDesc(s)
+	return tu
+}
+
+// SetNillableDesc sets the "desc" field if the given value is not nil.
+func (tu *TenantUpdate) SetNillableDesc(s *string) *TenantUpdate {
+	if s != nil {
+		tu.SetDesc(*s)
+	}
+	return tu
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (tu *TenantUpdate) Mutation() *TenantMutation {
 	return tu.mutation
@@ -171,6 +185,9 @@ func (tu *TenantUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.SecretKey(); ok {
 		_spec.SetField(tenant.FieldSecretKey, field.TypeString, value)
+	}
+	if value, ok := tu.mutation.Desc(); ok {
+		_spec.SetField(tenant.FieldDesc, field.TypeString, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -264,6 +281,20 @@ func (tuo *TenantUpdateOne) SetSecretKey(s string) *TenantUpdateOne {
 func (tuo *TenantUpdateOne) SetNillableSecretKey(s *string) *TenantUpdateOne {
 	if s != nil {
 		tuo.SetSecretKey(*s)
+	}
+	return tuo
+}
+
+// SetDesc sets the "desc" field.
+func (tuo *TenantUpdateOne) SetDesc(s string) *TenantUpdateOne {
+	tuo.mutation.SetDesc(s)
+	return tuo
+}
+
+// SetNillableDesc sets the "desc" field if the given value is not nil.
+func (tuo *TenantUpdateOne) SetNillableDesc(s *string) *TenantUpdateOne {
+	if s != nil {
+		tuo.SetDesc(*s)
 	}
 	return tuo
 }
@@ -365,6 +396,9 @@ func (tuo *TenantUpdateOne) sqlSave(ctx context.Context) (_node *Tenant, err err
 	}
 	if value, ok := tuo.mutation.SecretKey(); ok {
 		_spec.SetField(tenant.FieldSecretKey, field.TypeString, value)
+	}
+	if value, ok := tuo.mutation.Desc(); ok {
+		_spec.SetField(tenant.FieldDesc, field.TypeString, value)
 	}
 	_node = &Tenant{config: tuo.config}
 	_spec.Assign = _node.assignValues

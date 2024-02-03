@@ -27,6 +27,8 @@ const (
 	FieldAccessKey = "access_key"
 	// FieldSecretKey holds the string denoting the secret_key field in the database.
 	FieldSecretKey = "secret_key"
+	// FieldDesc holds the string denoting the desc field in the database.
+	FieldDesc = "desc"
 	// Table holds the table name of the tenant in the database.
 	Table = "tenants"
 )
@@ -41,6 +43,7 @@ var Columns = []string{
 	FieldType,
 	FieldAccessKey,
 	FieldSecretKey,
+	FieldDesc,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -103,4 +106,9 @@ func ByAccessKey(opts ...sql.OrderTermOption) OrderOption {
 // BySecretKey orders the results by the secret_key field.
 func BySecretKey(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSecretKey, opts...).ToFunc()
+}
+
+// ByDesc orders the results by the desc field.
+func ByDesc(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDesc, opts...).ToFunc()
 }

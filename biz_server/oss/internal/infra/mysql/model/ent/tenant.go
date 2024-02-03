@@ -30,7 +30,9 @@ type Tenant struct {
 	// AccessKey holds the value of the "access_key" field.
 	AccessKey string `json:"access_key,omitempty"`
 	// SecretKey holds the value of the "secret_key" field.
-	SecretKey    string `json:"secret_key,omitempty"`
+	SecretKey string `json:"secret_key,omitempty"`
+	// Desc holds the value of the "desc" field.
+	Desc         string `json:"desc,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -43,7 +45,7 @@ func (*Tenant) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case tenant.FieldID:
 			values[i] = new(sql.NullInt64)
-		case tenant.FieldName, tenant.FieldType, tenant.FieldAccessKey, tenant.FieldSecretKey:
+		case tenant.FieldName, tenant.FieldType, tenant.FieldAccessKey, tenant.FieldSecretKey, tenant.FieldDesc:
 			values[i] = new(sql.NullString)
 		case tenant.FieldCreatedAt, tenant.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -110,6 +112,12 @@ func (t *Tenant) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.SecretKey = value.String
 			}
+		case tenant.FieldDesc:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field desc", values[i])
+			} else if value.Valid {
+				t.Desc = value.String
+			}
 		default:
 			t.selectValues.Set(columns[i], values[i])
 		}
@@ -166,6 +174,9 @@ func (t *Tenant) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("secret_key=")
 	builder.WriteString(t.SecretKey)
+	builder.WriteString(", ")
+	builder.WriteString("desc=")
+	builder.WriteString(t.Desc)
 	builder.WriteByte(')')
 	return builder.String()
 }

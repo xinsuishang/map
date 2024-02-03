@@ -8,7 +8,6 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/client/genericclient"
 	"github.com/cloudwego/kitex/pkg/generic"
-	"github.com/cloudwego/kitex/pkg/kerrors"
 	"msp/common/model/errors"
 	"msp/gateway/biz/model"
 	"net/http"
@@ -25,19 +24,19 @@ func Gateway(ctx context.Context, c *app.RequestContext) {
 	routeName := c.Param("path")
 	cli, ok := SvcRouteMap[routeName]
 	if !ok {
-		resp.Err(errors.ServiceNotFoundErr.WithMessage("404"))
+		resp.Err(errors.ServiceNotFoundErr)
 		return
 	}
 	var params model.RequiredParams
 	if err := c.BindAndValidate(&params); err != nil {
 		hlog.CtxErrorf(ctx, "%v", err)
-		resp.Err(errors.ParamErr.WithError(err))
+		resp.ParamsErrMsg(err.Error())
 		return
 	}
 	body, err := sonic.Marshal(params.Body)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "%v", err)
-		resp.Err(errors.ParamErr.WithError(err))
+		resp.ParamsErrMsg(err.Error())
 		return
 	}
 
@@ -58,19 +57,14 @@ func Gateway(ctx context.Context, c *app.RequestContext) {
 	remoteResp, err := cli.GenericCall(ctx, "", customReq)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "GenericCall err:%v", err)
-		bizErr, ok := kerrors.FromBizStatusError(err)
-		if !ok {
-			resp.BizErrMsg(err.Error())
-			return
-		}
-		resp.Code = bizErr.BizStatusCode()
-		resp.Message = bizErr.BizMessage()
+
+		resp.Err(err)
 		return
 	}
 	realResp, ok := remoteResp.(*generic.HTTPResponse)
 	if !ok {
 		hlog.CtxErrorf(ctx, "remoteResp err:%v", err)
-		resp.BizErrMsg(err.Error())
+		resp.BizErrMsg("remoteResp err")
 		return
 	}
 

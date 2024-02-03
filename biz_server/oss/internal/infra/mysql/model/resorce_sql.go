@@ -27,6 +27,7 @@ func (p *repository) GetTenantsById(ctx context.Context, id int32) (*entity.Tena
 		Type:      get.Type,
 		AccessKey: get.AccessKey,
 		SecretKey: get.SecretKey,
+		Desc:      get.Desc,
 	}, nil
 }
 func (p *repository) GetDomainMapping(ctx context.Context, id int32) (*entity.DomainMappingEntity, error) {

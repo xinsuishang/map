@@ -11,19 +11,20 @@ import (
 	"msp/biz_server/oss/config"
 	"msp/biz_server/oss/initialize"
 	"msp/biz_server/oss/internal/infra/mysql/model"
+	commoninit "msp/common/initialize"
 )
 
 func main() {
 	// 本地配置文件初始化
 	initialize.InitLocalConfig()
 	// 根据本地配置文件初始化日志
-	initialize.InitLogger()
+	commoninit.InitLogger(&config.GlobalLocalConfig.LogConfig, config.GlobalServerConfig.Name, config.IsDev)
 	// 根据本地配置文件初始化配置
 	initialize.InitConfig()
 	// 根据本地配置文件初始化数据库
 	db := initialize.InitDB()
 	// 注册中心
-	r, info := initialize.InitRegistry(config.GlobalServerConfig.Port)
+	r, info := initialize.InitRegistry(config.GlobalServerConfig.Port, config.GlobalServerConfig.Group, config.GlobalServerConfig.Version)
 	//p := provider.NewOpenTelemetryProvider(
 	//	provider.WithServiceName(config.GlobalServerConfig.Name),
 	//	//provider.WithExportEndpoint(config.GlobalServerConfig.OtelInfo.EndPoint),

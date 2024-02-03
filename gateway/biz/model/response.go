@@ -1,6 +1,9 @@
 package model
 
-import "msp/common/model/errors"
+import (
+	"github.com/cloudwego/kitex/pkg/kerrors"
+	"msp/common/model/errors"
+)
 
 type Response struct {
 	// Status code, 0-success, other values-failure
@@ -16,17 +19,20 @@ func (r *Response) Success(data any) {
 	r.Data = data
 }
 
-func (r *Response) Err(err errors.ErrNo) {
-	r.Code = err.Code
-	r.Message = err.ErrMsg
+func (r *Response) Err(err error) {
+	bizErr, ok := kerrors.FromBizStatusError(err)
+	if !ok {
+		r.Err(errors.NewErrNo(errors.ServerHandleFailCode, err.Error()))
+		return
+	}
+	r.Code = bizErr.BizStatusCode()
+	r.Message = bizErr.BizMessage()
 }
 
 func (r *Response) ParamsErrMsg(message string) {
-	r.Code = errors.ParamErrCode
-	r.Message = message
+	r.Err(errors.NewErrNo(errors.ParamErrCode, message))
 }
 
 func (r *Response) BizErrMsg(message string) {
-	r.Code = errors.ServiceErrCode
-	r.Message = message
+	r.Err(errors.NewErrNo(errors.ServiceErrCode, message))
 }

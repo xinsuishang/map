@@ -728,6 +728,7 @@ type TenantMutation struct {
 	_type         *string
 	access_key    *string
 	secret_key    *string
+	desc          *string
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*Tenant, error)
@@ -1084,6 +1085,42 @@ func (m *TenantMutation) ResetSecretKey() {
 	m.secret_key = nil
 }
 
+// SetDesc sets the "desc" field.
+func (m *TenantMutation) SetDesc(s string) {
+	m.desc = &s
+}
+
+// Desc returns the value of the "desc" field in the mutation.
+func (m *TenantMutation) Desc() (r string, exists bool) {
+	v := m.desc
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDesc returns the old "desc" field's value of the Tenant entity.
+// If the Tenant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TenantMutation) OldDesc(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDesc is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDesc requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDesc: %w", err)
+	}
+	return oldValue.Desc, nil
+}
+
+// ResetDesc resets all changes to the "desc" field.
+func (m *TenantMutation) ResetDesc() {
+	m.desc = nil
+}
+
 // Where appends a list predicates to the TenantMutation builder.
 func (m *TenantMutation) Where(ps ...predicate.Tenant) {
 	m.predicates = append(m.predicates, ps...)
@@ -1118,7 +1155,7 @@ func (m *TenantMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TenantMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.created_at != nil {
 		fields = append(fields, tenant.FieldCreatedAt)
 	}
@@ -1139,6 +1176,9 @@ func (m *TenantMutation) Fields() []string {
 	}
 	if m.secret_key != nil {
 		fields = append(fields, tenant.FieldSecretKey)
+	}
+	if m.desc != nil {
+		fields = append(fields, tenant.FieldDesc)
 	}
 	return fields
 }
@@ -1162,6 +1202,8 @@ func (m *TenantMutation) Field(name string) (ent.Value, bool) {
 		return m.AccessKey()
 	case tenant.FieldSecretKey:
 		return m.SecretKey()
+	case tenant.FieldDesc:
+		return m.Desc()
 	}
 	return nil, false
 }
@@ -1185,6 +1227,8 @@ func (m *TenantMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldAccessKey(ctx)
 	case tenant.FieldSecretKey:
 		return m.OldSecretKey(ctx)
+	case tenant.FieldDesc:
+		return m.OldDesc(ctx)
 	}
 	return nil, fmt.Errorf("unknown Tenant field %s", name)
 }
@@ -1242,6 +1286,13 @@ func (m *TenantMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSecretKey(v)
+		return nil
+	case tenant.FieldDesc:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDesc(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Tenant field %s", name)
@@ -1312,6 +1363,9 @@ func (m *TenantMutation) ResetField(name string) error {
 		return nil
 	case tenant.FieldSecretKey:
 		m.ResetSecretKey()
+		return nil
+	case tenant.FieldDesc:
+		m.ResetDesc()
 		return nil
 	}
 	return fmt.Errorf("unknown Tenant field %s", name)

@@ -30,7 +30,7 @@ struct OssUploadResp {
 }
 
 service UploadService {
-    OssUploadResp OssUpload(1: UploadRequest req) ( api.post = '/cur/upload', api.param = 'true')
-    common.EmptyResponse NotionUpload(1: NotionUploadRequest req) ( api.post = '/cur/notionUpdate', api.param = 'true')
-    common.EmptyResponse WeightUpload(1: WeightUploadRequest req) ( api.post = '/cur/weight', api.param = 'true')
+    OssUploadResp OssUpload(1: UploadRequest req) ( api.post = '/oss/upload', api.param = 'true')
+    common.EmptyResponse NotionUpload(1: NotionUploadRequest req) ( api.post = '/oss/notionUpdate', api.param = 'true')
+    common.EmptyResponse WeightUpload(1: WeightUploadRequest req) ( api.post = '/oss/weight', api.param = 'true')
 }

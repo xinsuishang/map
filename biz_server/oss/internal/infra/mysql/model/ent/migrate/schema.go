@@ -36,6 +36,7 @@ var (
 		{Name: "type", Type: field.TypeString},
 		{Name: "access_key", Type: field.TypeString},
 		{Name: "secret_key", Type: field.TypeString},
+		{Name: "desc", Type: field.TypeString},
 	}
 	// TenantsTable holds the schema information for the "tenants" table.
 	TenantsTable = &schema.Table{

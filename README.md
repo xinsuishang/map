@@ -37,6 +37,7 @@ kitex -service oss -module msp -use "msp/biz_server/kitex_gen" ../../idl/rpc/oss
 cd internal/infra/mysql
 go run entgo.io/ent/cmd/ent new DomainMapping
 go run entgo.io/ent/cmd/ent new Tenant
+# 需创建数据库模型，修改schema
 ```
 
 ## 整体架构

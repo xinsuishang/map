@@ -27,6 +27,7 @@ func (Tenant) Fields() []ent.Field {
 		field.String("type"),
 		field.String("access_key"),
 		field.String("secret_key"),
+		field.String("desc"),
 	}
 }
 

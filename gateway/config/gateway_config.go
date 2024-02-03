@@ -8,8 +8,8 @@ type ServerConfig struct {
 }
 
 type GatewayConfig struct {
+	config.RpcSignConfig
 	Route       string   `mapstructure:"route" json:"route"`
-	SvrName     string   `mapstructure:"svr_name" json:"svr_name"`
 	FingerPrint string   `mapstructure:"finger_print" json:"finger_print"`
 	ParentPath  string   `mapstructure:"parent_path" json:"parent_path"`
 	IdlPath     string   `mapstructure:"idl_path" json:"idl_path"`

@@ -4,11 +4,11 @@ Content-Type: application/json
 
 {
   "body": {
-    "weight": 86.4,
-    "fileName": "/Users/danggui/Downloads/IMG_7200",
-    "remoteName": "20231210.JPG",
+    "weight": 86.9,
+    "fileName": "/Users/danggui/Downloads/IMG_7341.JPG",
+    "remoteName": "20240109.JPG",
     "forceUpload": false,
-    "dateTime": "2023-12-10"
+    "dateTime": "2024-01-09"
   }
 }
 ### 健康检查接口
