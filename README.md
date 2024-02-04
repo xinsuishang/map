@@ -5,6 +5,7 @@ go install github.com/cloudwego/hertz/cmd/hz@latest
 go install github.com/cloudwego/kitex/tool/cmd/kitex@latest
 go install github.com/cloudwego/thriftgo@latest
 go install github.com/cloudwego/thrift-gen-validator@latest
+go install github.com/oligot/go-mod-upgrade@latest
 ```
 
 ```shell
@@ -38,6 +39,9 @@ cd internal/infra/mysql/model
 go run entgo.io/ent/cmd/ent new DomainMapping
 go run entgo.io/ent/cmd/ent new Tenant
 # 需创建数据库模型，修改schema
+
+go mod tidy
+go-mod-upgrade
 ```
 
 ## 整体架构

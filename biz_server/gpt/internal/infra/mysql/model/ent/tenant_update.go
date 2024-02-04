@@ -153,6 +153,20 @@ func (tu *TenantUpdate) SetNillableDashboard(s *string) *TenantUpdate {
 	return tu
 }
 
+// SetIsDeleted sets the "is_deleted" field.
+func (tu *TenantUpdate) SetIsDeleted(b bool) *TenantUpdate {
+	tu.mutation.SetIsDeleted(b)
+	return tu
+}
+
+// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
+func (tu *TenantUpdate) SetNillableIsDeleted(b *bool) *TenantUpdate {
+	if b != nil {
+		tu.SetIsDeleted(*b)
+	}
+	return tu
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (tu *TenantUpdate) Mutation() *TenantMutation {
 	return tu.mutation
@@ -232,6 +246,9 @@ func (tu *TenantUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.Dashboard(); ok {
 		_spec.SetField(tenant.FieldDashboard, field.TypeString, value)
+	}
+	if value, ok := tu.mutation.IsDeleted(); ok {
+		_spec.SetField(tenant.FieldIsDeleted, field.TypeBool, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -378,6 +395,20 @@ func (tuo *TenantUpdateOne) SetNillableDashboard(s *string) *TenantUpdateOne {
 	return tuo
 }
 
+// SetIsDeleted sets the "is_deleted" field.
+func (tuo *TenantUpdateOne) SetIsDeleted(b bool) *TenantUpdateOne {
+	tuo.mutation.SetIsDeleted(b)
+	return tuo
+}
+
+// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
+func (tuo *TenantUpdateOne) SetNillableIsDeleted(b *bool) *TenantUpdateOne {
+	if b != nil {
+		tuo.SetIsDeleted(*b)
+	}
+	return tuo
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (tuo *TenantUpdateOne) Mutation() *TenantMutation {
 	return tuo.mutation
@@ -487,6 +518,9 @@ func (tuo *TenantUpdateOne) sqlSave(ctx context.Context) (_node *Tenant, err err
 	}
 	if value, ok := tuo.mutation.Dashboard(); ok {
 		_spec.SetField(tenant.FieldDashboard, field.TypeString, value)
+	}
+	if value, ok := tuo.mutation.IsDeleted(); ok {
+		_spec.SetField(tenant.FieldIsDeleted, field.TypeBool, value)
 	}
 	_node = &Tenant{config: tuo.config}
 	_spec.Assign = _node.assignValues

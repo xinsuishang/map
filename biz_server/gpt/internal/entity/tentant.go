@@ -10,4 +10,5 @@ type TenantEntity struct {
 	SecretKey     string
 	Desc          string
 	Dashboard     string
+	IsDeleted     bool
 }

@@ -31,6 +31,7 @@ func (Tenant) Fields() []ent.Field {
 		field.String("secret_key"),
 		field.String("desc"),
 		field.String("dashboard"),
+		field.Bool("is_deleted"),
 	}
 }
 

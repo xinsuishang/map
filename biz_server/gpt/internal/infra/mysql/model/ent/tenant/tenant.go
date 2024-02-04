@@ -33,6 +33,8 @@ const (
 	FieldDesc = "desc"
 	// FieldDashboard holds the string denoting the dashboard field in the database.
 	FieldDashboard = "dashboard"
+	// FieldIsDeleted holds the string denoting the is_deleted field in the database.
+	FieldIsDeleted = "is_deleted"
 	// Table holds the table name of the tenant in the database.
 	Table = "tenants"
 )
@@ -50,6 +52,7 @@ var Columns = []string{
 	FieldSecretKey,
 	FieldDesc,
 	FieldDashboard,
+	FieldIsDeleted,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -129,4 +132,9 @@ func ByDesc(opts ...sql.OrderTermOption) OrderOption {
 // ByDashboard orders the results by the dashboard field.
 func ByDashboard(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDashboard, opts...).ToFunc()
+}
+
+// ByIsDeleted orders the results by the is_deleted field.
+func ByIsDeleted(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsDeleted, opts...).ToFunc()
 }

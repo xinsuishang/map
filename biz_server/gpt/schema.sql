@@ -9,6 +9,7 @@ CREATE TABLE `tenants`
     `secret_key`     varchar(255) NOT NULL COMMENT '签名密钥',
     `dashboard`      varchar(255) NOT NULL COMMENT '密钥管理面板',
     `desc`           varchar(255) NOT NULL COMMENT '描述',
+    `is_deleted`     tinyint(4) NOT NULL DEFAULT 0 COMMENT '已删除',
     `created_at`     datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`     datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)

@@ -96,6 +96,12 @@ func (tc *TenantCreate) SetDashboard(s string) *TenantCreate {
 	return tc
 }
 
+// SetIsDeleted sets the "is_deleted" field.
+func (tc *TenantCreate) SetIsDeleted(b bool) *TenantCreate {
+	tc.mutation.SetIsDeleted(b)
+	return tc
+}
+
 // SetID sets the "id" field.
 func (tc *TenantCreate) SetID(i int32) *TenantCreate {
 	tc.mutation.SetID(i)
@@ -179,6 +185,9 @@ func (tc *TenantCreate) check() error {
 	if _, ok := tc.mutation.Dashboard(); !ok {
 		return &ValidationError{Name: "dashboard", err: errors.New(`ent: missing required field "Tenant.dashboard"`)}
 	}
+	if _, ok := tc.mutation.IsDeleted(); !ok {
+		return &ValidationError{Name: "is_deleted", err: errors.New(`ent: missing required field "Tenant.is_deleted"`)}
+	}
 	if v, ok := tc.mutation.ID(); ok {
 		if err := tenant.IDValidator(v); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "Tenant.id": %w`, err)}
@@ -255,6 +264,10 @@ func (tc *TenantCreate) createSpec() (*Tenant, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Dashboard(); ok {
 		_spec.SetField(tenant.FieldDashboard, field.TypeString, value)
 		_node.Dashboard = value
+	}
+	if value, ok := tc.mutation.IsDeleted(); ok {
+		_spec.SetField(tenant.FieldIsDeleted, field.TypeBool, value)
+		_node.IsDeleted = value
 	}
 	return _node, _spec
 }

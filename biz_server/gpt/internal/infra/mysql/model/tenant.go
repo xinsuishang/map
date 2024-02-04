@@ -13,10 +13,10 @@ import (
 )
 
 var tenantEntityCache = asynccache.NewAsyncCache(asynccache.Options{
-	// 1分钟过期，保证不自动刷新
-	RefreshDuration: time.Minute * 1 * 2,
+	// 10 分钟过期，保证不自动刷新
+	RefreshDuration: time.Minute * 10 * 2,
 	EnableExpire:    true,
-	ExpireDuration:  time.Minute * 1,
+	ExpireDuration:  time.Minute * 10,
 	Fetcher: func(id string) (interface{}, error) {
 		if id == "-1" {
 			return nil, nil
@@ -97,6 +97,7 @@ func convertTenant(source *ent.Tenant) *entity.TenantEntity {
 		SecretKey:     source.SecretKey,
 		Desc:          source.Desc,
 		Dashboard:     source.Dashboard,
+		IsDeleted:     source.IsDeleted,
 	}
 }
 

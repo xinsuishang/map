@@ -36,7 +36,9 @@ type Tenant struct {
 	// Desc holds the value of the "desc" field.
 	Desc string `json:"desc,omitempty"`
 	// Dashboard holds the value of the "dashboard" field.
-	Dashboard    string `json:"dashboard,omitempty"`
+	Dashboard string `json:"dashboard,omitempty"`
+	// IsDeleted holds the value of the "is_deleted" field.
+	IsDeleted    bool `json:"is_deleted,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -45,7 +47,7 @@ func (*Tenant) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case tenant.FieldIsApplication:
+		case tenant.FieldIsApplication, tenant.FieldIsDeleted:
 			values[i] = new(sql.NullBool)
 		case tenant.FieldID, tenant.FieldParentID:
 			values[i] = new(sql.NullInt64)
@@ -134,6 +136,12 @@ func (t *Tenant) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.Dashboard = value.String
 			}
+		case tenant.FieldIsDeleted:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_deleted", values[i])
+			} else if value.Valid {
+				t.IsDeleted = value.Bool
+			}
 		default:
 			t.selectValues.Set(columns[i], values[i])
 		}
@@ -199,6 +207,9 @@ func (t *Tenant) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("dashboard=")
 	builder.WriteString(t.Dashboard)
+	builder.WriteString(", ")
+	builder.WriteString("is_deleted=")
+	builder.WriteString(fmt.Sprintf("%v", t.IsDeleted))
 	builder.WriteByte(')')
 	return builder.String()
 }

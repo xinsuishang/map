@@ -1303,6 +1303,7 @@ type TenantMutation struct {
 	secret_key     *string
 	desc           *string
 	dashboard      *string
+	is_deleted     *bool
 	clearedFields  map[string]struct{}
 	done           bool
 	oldValue       func(context.Context) (*Tenant, error)
@@ -1793,6 +1794,42 @@ func (m *TenantMutation) ResetDashboard() {
 	m.dashboard = nil
 }
 
+// SetIsDeleted sets the "is_deleted" field.
+func (m *TenantMutation) SetIsDeleted(b bool) {
+	m.is_deleted = &b
+}
+
+// IsDeleted returns the value of the "is_deleted" field in the mutation.
+func (m *TenantMutation) IsDeleted() (r bool, exists bool) {
+	v := m.is_deleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsDeleted returns the old "is_deleted" field's value of the Tenant entity.
+// If the Tenant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TenantMutation) OldIsDeleted(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsDeleted is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsDeleted requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsDeleted: %w", err)
+	}
+	return oldValue.IsDeleted, nil
+}
+
+// ResetIsDeleted resets all changes to the "is_deleted" field.
+func (m *TenantMutation) ResetIsDeleted() {
+	m.is_deleted = nil
+}
+
 // Where appends a list predicates to the TenantMutation builder.
 func (m *TenantMutation) Where(ps ...predicate.Tenant) {
 	m.predicates = append(m.predicates, ps...)
@@ -1827,7 +1864,7 @@ func (m *TenantMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TenantMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, tenant.FieldCreatedAt)
 	}
@@ -1858,6 +1895,9 @@ func (m *TenantMutation) Fields() []string {
 	if m.dashboard != nil {
 		fields = append(fields, tenant.FieldDashboard)
 	}
+	if m.is_deleted != nil {
+		fields = append(fields, tenant.FieldIsDeleted)
+	}
 	return fields
 }
 
@@ -1886,6 +1926,8 @@ func (m *TenantMutation) Field(name string) (ent.Value, bool) {
 		return m.Desc()
 	case tenant.FieldDashboard:
 		return m.Dashboard()
+	case tenant.FieldIsDeleted:
+		return m.IsDeleted()
 	}
 	return nil, false
 }
@@ -1915,6 +1957,8 @@ func (m *TenantMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldDesc(ctx)
 	case tenant.FieldDashboard:
 		return m.OldDashboard(ctx)
+	case tenant.FieldIsDeleted:
+		return m.OldIsDeleted(ctx)
 	}
 	return nil, fmt.Errorf("unknown Tenant field %s", name)
 }
@@ -1993,6 +2037,13 @@ func (m *TenantMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDashboard(v)
+		return nil
+	case tenant.FieldIsDeleted:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsDeleted(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Tenant field %s", name)
@@ -2087,6 +2138,9 @@ func (m *TenantMutation) ResetField(name string) error {
 		return nil
 	case tenant.FieldDashboard:
 		m.ResetDashboard()
+		return nil
+	case tenant.FieldIsDeleted:
+		m.ResetIsDeleted()
 		return nil
 	}
 	return fmt.Errorf("unknown Tenant field %s", name)

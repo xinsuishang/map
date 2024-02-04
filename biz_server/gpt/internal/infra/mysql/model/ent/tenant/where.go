@@ -104,6 +104,11 @@ func Dashboard(v string) predicate.Tenant {
 	return predicate.Tenant(sql.FieldEQ(FieldDashboard, v))
 }
 
+// IsDeleted applies equality check predicate on the "is_deleted" field. It's identical to IsDeletedEQ.
+func IsDeleted(v bool) predicate.Tenant {
+	return predicate.Tenant(sql.FieldEQ(FieldIsDeleted, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Tenant {
 	return predicate.Tenant(sql.FieldEQ(FieldCreatedAt, v))
@@ -622,6 +627,16 @@ func DashboardEqualFold(v string) predicate.Tenant {
 // DashboardContainsFold applies the ContainsFold predicate on the "dashboard" field.
 func DashboardContainsFold(v string) predicate.Tenant {
 	return predicate.Tenant(sql.FieldContainsFold(FieldDashboard, v))
+}
+
+// IsDeletedEQ applies the EQ predicate on the "is_deleted" field.
+func IsDeletedEQ(v bool) predicate.Tenant {
+	return predicate.Tenant(sql.FieldEQ(FieldIsDeleted, v))
+}
+
+// IsDeletedNEQ applies the NEQ predicate on the "is_deleted" field.
+func IsDeletedNEQ(v bool) predicate.Tenant {
+	return predicate.Tenant(sql.FieldNEQ(FieldIsDeleted, v))
 }
 
 // And groups predicates with the AND operator between them.
