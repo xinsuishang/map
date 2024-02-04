@@ -49,7 +49,7 @@ func (dmc *DomainMappingCreate) SetNillableUpdatedAt(t *time.Time) *DomainMappin
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (dmc *DomainMappingCreate) SetTenantID(i int) *DomainMappingCreate {
+func (dmc *DomainMappingCreate) SetTenantID(i int32) *DomainMappingCreate {
 	dmc.mutation.SetTenantID(i)
 	return dmc
 }
@@ -75,6 +75,12 @@ func (dmc *DomainMappingCreate) SetBucketName(s string) *DomainMappingCreate {
 // SetDesc sets the "desc" field.
 func (dmc *DomainMappingCreate) SetDesc(s string) *DomainMappingCreate {
 	dmc.mutation.SetDesc(s)
+	return dmc
+}
+
+// SetID sets the "id" field.
+func (dmc *DomainMappingCreate) SetID(i int32) *DomainMappingCreate {
+	dmc.mutation.SetID(i)
 	return dmc
 }
 
@@ -146,6 +152,11 @@ func (dmc *DomainMappingCreate) check() error {
 	if _, ok := dmc.mutation.Desc(); !ok {
 		return &ValidationError{Name: "desc", err: errors.New(`ent: missing required field "DomainMapping.desc"`)}
 	}
+	if v, ok := dmc.mutation.ID(); ok {
+		if err := domainmapping.IDValidator(v); err != nil {
+			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "DomainMapping.id": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -160,8 +171,10 @@ func (dmc *DomainMappingCreate) sqlSave(ctx context.Context) (*DomainMapping, er
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int32(id)
+	}
 	dmc.mutation.id = &_node.ID
 	dmc.mutation.done = true
 	return _node, nil
@@ -170,8 +183,12 @@ func (dmc *DomainMappingCreate) sqlSave(ctx context.Context) (*DomainMapping, er
 func (dmc *DomainMappingCreate) createSpec() (*DomainMapping, *sqlgraph.CreateSpec) {
 	var (
 		_node = &DomainMapping{config: dmc.config}
-		_spec = sqlgraph.NewCreateSpec(domainmapping.Table, sqlgraph.NewFieldSpec(domainmapping.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(domainmapping.Table, sqlgraph.NewFieldSpec(domainmapping.FieldID, field.TypeInt32))
 	)
+	if id, ok := dmc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := dmc.mutation.CreatedAt(); ok {
 		_spec.SetField(domainmapping.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -181,7 +198,7 @@ func (dmc *DomainMappingCreate) createSpec() (*DomainMapping, *sqlgraph.CreateSp
 		_node.UpdatedAt = value
 	}
 	if value, ok := dmc.mutation.TenantID(); ok {
-		_spec.SetField(domainmapping.FieldTenantID, field.TypeInt, value)
+		_spec.SetField(domainmapping.FieldTenantID, field.TypeInt32, value)
 		_node.TenantID = value
 	}
 	if value, ok := dmc.mutation.RegionID(); ok {
@@ -248,9 +265,9 @@ func (dmcb *DomainMappingCreateBulk) Save(ctx context.Context) ([]*DomainMapping
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = int32(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

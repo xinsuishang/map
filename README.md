@@ -30,11 +30,11 @@ hz new
 
 cd ../biz_server
 kitex --thrift-plugin validator -module msp ../idl/rpc/oss.thrift
-mkdir -p oss/internal/infra/mysql
+mkdir -p oss/internal/infra/mysql/model
 cd oss
 kitex -service oss -module msp -use "msp/biz_server/kitex_gen" ../../idl/rpc/oss.thrift
 
-cd internal/infra/mysql
+cd internal/infra/mysql/model
 go run entgo.io/ent/cmd/ent new DomainMapping
 go run entgo.io/ent/cmd/ent new Tenant
 # 需创建数据库模型，修改schema

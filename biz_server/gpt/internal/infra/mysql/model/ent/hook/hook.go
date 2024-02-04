@@ -8,6 +8,30 @@ import (
 	"msp/biz_server/gpt/internal/infra/mysql/model/ent"
 )
 
+// The ChatFunc type is an adapter to allow the use of ordinary
+// function as Chat mutator.
+type ChatFunc func(context.Context, *ent.ChatMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ChatFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ChatMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ChatMutation", m)
+}
+
+// The ChatMessageFunc type is an adapter to allow the use of ordinary
+// function as ChatMessage mutator.
+type ChatMessageFunc func(context.Context, *ent.ChatMessageMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ChatMessageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ChatMessageMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ChatMessageMutation", m)
+}
+
 // The TenantFunc type is an adapter to allow the use of ordinary
 // function as Tenant mutator.
 type TenantFunc func(context.Context, *ent.TenantMutation) (ent.Value, error)

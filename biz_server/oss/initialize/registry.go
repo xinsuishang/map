@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/consul/api"
 	consul "github.com/kitex-contrib/registry-consul"
 	"msp/biz_server/oss/config"
-	"msp/common/constant"
 	"net"
 	"strconv"
 )
@@ -36,9 +35,7 @@ func InitRegistry(port int, group, version string) (registry.Registry, *registry
 		ServiceName: config.GlobalServerConfig.Name,
 		Addr:        utils.NewNetAddr("tcp", net.JoinHostPort(config.GlobalServerConfig.Host, strconv.Itoa(port))),
 		Tags: map[string]string{
-			"ID":             sf.Generate().Base36(),
-			constant.Group:   group,
-			constant.Version: version,
+			"ID": sf.Generate().Base36(),
 		},
 	}
 	return r, info

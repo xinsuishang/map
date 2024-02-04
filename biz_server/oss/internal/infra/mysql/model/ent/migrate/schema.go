@@ -11,10 +11,10 @@ import (
 var (
 	// DomainMappingColumns holds the columns for the "domain_mapping" table.
 	DomainMappingColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "id", Type: field.TypeInt32, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "tenant_id", Type: field.TypeInt, Unique: true},
+		{Name: "tenant_id", Type: field.TypeInt32, Unique: true},
 		{Name: "region_id", Type: field.TypeString},
 		{Name: "domain", Type: field.TypeString},
 		{Name: "bucket_name", Type: field.TypeString},
@@ -28,7 +28,7 @@ var (
 	}
 	// TenantsColumns holds the columns for the "tenants" table.
 	TenantsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "id", Type: field.TypeInt32, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},

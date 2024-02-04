@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
@@ -11,14 +12,17 @@ import (
 	"msp/biz_server/oss/config"
 	"msp/biz_server/oss/initialize"
 	"msp/biz_server/oss/internal/infra/mysql/model"
+	"msp/common/constant"
 	commoninit "msp/common/initialize"
+	"msp/common/valid"
+	"net"
 )
 
 func main() {
 	// 本地配置文件初始化
 	initialize.InitLocalConfig()
 	// 根据本地配置文件初始化日志
-	commoninit.InitLogger(&config.GlobalLocalConfig.LogConfig, config.GlobalServerConfig.Name, config.IsDev)
+	commoninit.InitLogger(&config.GlobalLocalConfig.LogConfig, config.GlobalLocalConfig.Name, config.IsDev)
 	// 根据本地配置文件初始化配置
 	initialize.InitConfig()
 	// 根据本地配置文件初始化数据库
@@ -31,9 +35,7 @@ func main() {
 	//	provider.WithInsecure(),
 	//)
 	//defer p.Shutdown(context.Background())
-
-	model.NewEntClient(db)
-
+	addr, _ := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", config.GlobalServerConfig.Port))
 	svr := uploadservice.NewServer(func() oss.UploadService {
 		return &UploadServiceImpl{
 			repository: model.NewEntClient(db),
@@ -43,7 +45,14 @@ func main() {
 		server.WithRegistryInfo(info),
 		server.WithLimit(&limit.Option{MaxConnections: 2000, MaxQPS: 500}),
 		server.WithSuite(tracing.NewServerSuite()),
-		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: config.GlobalServerConfig.Name}))
+		server.WithSuite(valid.NewServerSuite()),
+		server.WithServiceAddr(addr),
+		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: config.GlobalServerConfig.Name,
+			Tags: map[string]string{
+				constant.Group:   "production",
+				constant.Version: "2.0",
+			},
+		}))
 
 	err := svr.Run()
 

@@ -9,9 +9,40 @@ import (
 )
 
 var (
+	// ChatColumns holds the columns for the "chat" table.
+	ChatColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt32, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "model_id", Type: field.TypeInt32},
+		{Name: "session_id", Type: field.TypeString, Unique: true},
+		{Name: "name", Type: field.TypeString},
+	}
+	// ChatTable holds the schema information for the "chat" table.
+	ChatTable = &schema.Table{
+		Name:       "chat",
+		Columns:    ChatColumns,
+		PrimaryKey: []*schema.Column{ChatColumns[0]},
+	}
+	// ChatMessageColumns holds the columns for the "chat_message" table.
+	ChatMessageColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt32, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "chat_id", Type: field.TypeInt32},
+		{Name: "request_id", Type: field.TypeString},
+		{Name: "text", Type: field.TypeString},
+		{Name: "version", Type: field.TypeInt8},
+	}
+	// ChatMessageTable holds the schema information for the "chat_message" table.
+	ChatMessageTable = &schema.Table{
+		Name:       "chat_message",
+		Columns:    ChatMessageColumns,
+		PrimaryKey: []*schema.Column{ChatMessageColumns[0]},
+	}
 	// TenantsColumns holds the columns for the "tenants" table.
 	TenantsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "id", Type: field.TypeInt32, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
@@ -31,11 +62,19 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		ChatTable,
+		ChatMessageTable,
 		TenantsTable,
 	}
 )
 
 func init() {
+	ChatTable.Annotation = &entsql.Annotation{
+		Table: "chat",
+	}
+	ChatMessageTable.Annotation = &entsql.Annotation{
+		Table: "chat_message",
+	}
 	TenantsTable.Annotation = &entsql.Annotation{
 		Table: "tenants",
 	}

@@ -16,13 +16,13 @@ import (
 type DomainMapping struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID int32 `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// TenantID holds the value of the "tenant_id" field.
-	TenantID int `json:"tenant_id,omitempty"`
+	TenantID int32 `json:"tenant_id,omitempty"`
 	// RegionID holds the value of the "region_id" field.
 	RegionID string `json:"region_id,omitempty"`
 	// Domain holds the value of the "domain" field.
@@ -65,7 +65,7 @@ func (dm *DomainMapping) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			dm.ID = int(value.Int64)
+			dm.ID = int32(value.Int64)
 		case domainmapping.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -82,7 +82,7 @@ func (dm *DomainMapping) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				dm.TenantID = int(value.Int64)
+				dm.TenantID = int32(value.Int64)
 			}
 		case domainmapping.FieldRegionID:
 			if value, ok := values[i].(*sql.NullString); !ok {

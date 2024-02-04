@@ -29,12 +29,6 @@ func NewNotionUploadService(ctx context.Context, repository usecase.Repository) 
 
 func (s *NotionUploadService) Run(req *oss.NotionUploadRequest) (resp *common.EmptyResponse, err error) {
 	klog.CtxInfof(s.ctx, "NotionUploadService Run req: %+v", req)
-	err = req.IsValid()
-	if err != nil {
-		klog.CtxWarnf(s.ctx, "NotionUploadService Run req valid err %+v", err)
-		err = errors.NewErrNo(errors.ParamErrCode, err.Error())
-		return
-	}
 	resp = common.NewEmptyResponse()
 	mapping, err := s.repository.GetDomainMapping(s.ctx, req.GetDomainId())
 	if err != nil {

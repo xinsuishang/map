@@ -81,8 +81,8 @@ func (tq *TenantQuery) FirstX(ctx context.Context) *Tenant {
 
 // FirstID returns the first Tenant ID from the query.
 // Returns a *NotFoundError when no Tenant ID was found.
-func (tq *TenantQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (tq *TenantQuery) FirstID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = tq.Limit(1).IDs(setContextOp(ctx, tq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -94,7 +94,7 @@ func (tq *TenantQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (tq *TenantQuery) FirstIDX(ctx context.Context) int {
+func (tq *TenantQuery) FirstIDX(ctx context.Context) int32 {
 	id, err := tq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -132,8 +132,8 @@ func (tq *TenantQuery) OnlyX(ctx context.Context) *Tenant {
 // OnlyID is like Only, but returns the only Tenant ID in the query.
 // Returns a *NotSingularError when more than one Tenant ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (tq *TenantQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (tq *TenantQuery) OnlyID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = tq.Limit(2).IDs(setContextOp(ctx, tq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -149,7 +149,7 @@ func (tq *TenantQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (tq *TenantQuery) OnlyIDX(ctx context.Context) int {
+func (tq *TenantQuery) OnlyIDX(ctx context.Context) int32 {
 	id, err := tq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -177,7 +177,7 @@ func (tq *TenantQuery) AllX(ctx context.Context) []*Tenant {
 }
 
 // IDs executes the query and returns a list of Tenant IDs.
-func (tq *TenantQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (tq *TenantQuery) IDs(ctx context.Context) (ids []int32, err error) {
 	if tq.ctx.Unique == nil && tq.path != nil {
 		tq.Unique(true)
 	}
@@ -189,7 +189,7 @@ func (tq *TenantQuery) IDs(ctx context.Context) (ids []int, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (tq *TenantQuery) IDsX(ctx context.Context) []int {
+func (tq *TenantQuery) IDsX(ctx context.Context) []int32 {
 	ids, err := tq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -364,7 +364,7 @@ func (tq *TenantQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (tq *TenantQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(tenant.Table, tenant.Columns, sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(tenant.Table, tenant.Columns, sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt32))
 	_spec.From = tq.sql
 	if unique := tq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

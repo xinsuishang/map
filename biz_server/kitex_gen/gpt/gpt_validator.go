@@ -22,14 +22,8 @@ var (
 )
 
 func (p *ApplicationReq) IsValid() error {
-	if p.ModelId <= int32(0) {
-		return fmt.Errorf("field ModelId gt rule failed, current value: %v", p.ModelId)
-	}
-	if len(p.SessionId) < int(5) {
-		return fmt.Errorf("field SessionId min_len rule failed, current value: %d", len(p.SessionId))
-	}
-	if len(p.SessionId) > int(100) {
-		return fmt.Errorf("field SessionId max_len rule failed, current value: %d", len(p.SessionId))
+	if p.ModelId < int32(1) {
+		return fmt.Errorf("field ModelId ge rule failed, current value: %v", p.ModelId)
 	}
 	if len(p.Prompt) < int(1) {
 		return fmt.Errorf("field Prompt min_len rule failed, current value: %d", len(p.Prompt))
@@ -50,14 +44,14 @@ func (p *ApplicationListReq) IsValid() error {
 	}
 	return nil
 }
-func (p *ApplicationInfo) IsValid() error {
-	return nil
-}
 func (p *ApplicationListResp) IsValid() error {
 	if p.Page != nil {
 		if err := p.Page.IsValid(); err != nil {
 			return fmt.Errorf("field Page not valid, %w", err)
 		}
 	}
+	return nil
+}
+func (p *ApplicationInfo) IsValid() error {
 	return nil
 }

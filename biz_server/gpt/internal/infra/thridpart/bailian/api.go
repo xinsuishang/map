@@ -1,11 +1,13 @@
 package bailian
 
 import (
+	"context"
 	"errors"
 	client "github.com/aliyun/alibabacloud-bailian-go-sdk/client"
 	"github.com/bytedance/gopkg/cache/asynccache"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"msp/biz_server/gpt/internal/entity"
+	"msp/biz_server/gpt/internal/infra/mysql/model"
+	"strconv"
 	"time"
 )
 
@@ -57,10 +59,11 @@ var tokenClientCache = asynccache.NewAsyncCache(asynccache.Options{
 		return true
 	},
 	Fetcher: func(modelId string) (interface{}, error) {
-
-		// todo 根据 modelId 获取 app 参数
-		entityData := &entity.TenantEntity{}
-		parentEntity := &entity.TenantEntity{}
+		primary, err := strconv.Atoi(modelId)
+		if err != nil {
+			return nil, err
+		}
+		entityData, parentEntity, err := model.DB.GetCacheTenantsAndParentById(context.Background(), int32(primary))
 
 		// 根据 app 参数获取 tokenClient
 		cacheData := &accessTokenClient{
@@ -75,7 +78,7 @@ var tokenClientCache = asynccache.NewAsyncCache(asynccache.Options{
 
 func getToken(modelId int32) (*accessTokenClient, error) {
 	// 根据 key 获取clientCache
-	val, err := tokenClientCache.Get(string(modelId))
+	val, err := tokenClientCache.Get(strconv.Itoa(int(modelId)))
 
 	if err != nil {
 		return nil, err

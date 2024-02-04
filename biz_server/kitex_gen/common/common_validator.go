@@ -25,14 +25,14 @@ func (p *EmptyResponse) IsValid() error {
 	return nil
 }
 func (p *Page) IsValid() error {
-	if p.PageNo <= int32(1) {
-		return fmt.Errorf("field PageNo gt rule failed, current value: %v", p.PageNo)
+	if p.PageNo < int32(1) {
+		return fmt.Errorf("field PageNo ge rule failed, current value: %v", p.PageNo)
 	}
-	if p.PageSize <= int32(1) {
-		return fmt.Errorf("field PageSize gt rule failed, current value: %v", p.PageSize)
+	if p.PageSize < int32(1) {
+		return fmt.Errorf("field PageSize ge rule failed, current value: %v", p.PageSize)
 	}
-	if p.PageSize >= int32(100) {
-		return fmt.Errorf("field PageSize lt rule failed, current value: %v", p.PageSize)
+	if p.PageSize > int32(100) {
+		return fmt.Errorf("field PageSize le rule failed, current value: %v", p.PageSize)
 	}
 	return nil
 }

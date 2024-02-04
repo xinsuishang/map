@@ -3,6 +3,8 @@
 package ent
 
 import (
+	"msp/biz_server/gpt/internal/infra/mysql/model/ent/chat"
+	"msp/biz_server/gpt/internal/infra/mysql/model/ent/chatmessage"
 	"msp/biz_server/gpt/internal/infra/mysql/model/ent/schema"
 	"msp/biz_server/gpt/internal/infra/mysql/model/ent/tenant"
 	"time"
@@ -12,6 +14,44 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	chatMixin := schema.Chat{}.Mixin()
+	chatMixinFields0 := chatMixin[0].Fields()
+	_ = chatMixinFields0
+	chatFields := schema.Chat{}.Fields()
+	_ = chatFields
+	// chatDescCreatedAt is the schema descriptor for created_at field.
+	chatDescCreatedAt := chatMixinFields0[0].Descriptor()
+	// chat.DefaultCreatedAt holds the default value on creation for the created_at field.
+	chat.DefaultCreatedAt = chatDescCreatedAt.Default.(func() time.Time)
+	// chatDescUpdatedAt is the schema descriptor for updated_at field.
+	chatDescUpdatedAt := chatMixinFields0[1].Descriptor()
+	// chat.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	chat.DefaultUpdatedAt = chatDescUpdatedAt.Default.(func() time.Time)
+	// chat.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	chat.UpdateDefaultUpdatedAt = chatDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// chatDescID is the schema descriptor for id field.
+	chatDescID := chatFields[0].Descriptor()
+	// chat.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	chat.IDValidator = chatDescID.Validators[0].(func(int32) error)
+	chatmessageMixin := schema.ChatMessage{}.Mixin()
+	chatmessageMixinFields0 := chatmessageMixin[0].Fields()
+	_ = chatmessageMixinFields0
+	chatmessageFields := schema.ChatMessage{}.Fields()
+	_ = chatmessageFields
+	// chatmessageDescCreatedAt is the schema descriptor for created_at field.
+	chatmessageDescCreatedAt := chatmessageMixinFields0[0].Descriptor()
+	// chatmessage.DefaultCreatedAt holds the default value on creation for the created_at field.
+	chatmessage.DefaultCreatedAt = chatmessageDescCreatedAt.Default.(func() time.Time)
+	// chatmessageDescUpdatedAt is the schema descriptor for updated_at field.
+	chatmessageDescUpdatedAt := chatmessageMixinFields0[1].Descriptor()
+	// chatmessage.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	chatmessage.DefaultUpdatedAt = chatmessageDescUpdatedAt.Default.(func() time.Time)
+	// chatmessage.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	chatmessage.UpdateDefaultUpdatedAt = chatmessageDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// chatmessageDescID is the schema descriptor for id field.
+	chatmessageDescID := chatmessageFields[0].Descriptor()
+	// chatmessage.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	chatmessage.IDValidator = chatmessageDescID.Validators[0].(func(int32) error)
 	tenantMixin := schema.Tenant{}.Mixin()
 	tenantMixinFields0 := tenantMixin[0].Fields()
 	_ = tenantMixinFields0
@@ -27,4 +67,8 @@ func init() {
 	tenant.DefaultUpdatedAt = tenantDescUpdatedAt.Default.(func() time.Time)
 	// tenant.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	tenant.UpdateDefaultUpdatedAt = tenantDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// tenantDescID is the schema descriptor for id field.
+	tenantDescID := tenantFields[0].Descriptor()
+	// tenant.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	tenant.IDValidator = tenantDescID.Validators[0].(func(int32) error)
 }

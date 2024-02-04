@@ -268,7 +268,7 @@ func (c *DomainMappingClient) UpdateOne(dm *DomainMapping) *DomainMappingUpdateO
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *DomainMappingClient) UpdateOneID(id int) *DomainMappingUpdateOne {
+func (c *DomainMappingClient) UpdateOneID(id int32) *DomainMappingUpdateOne {
 	mutation := newDomainMappingMutation(c.config, OpUpdateOne, withDomainMappingID(id))
 	return &DomainMappingUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -285,7 +285,7 @@ func (c *DomainMappingClient) DeleteOne(dm *DomainMapping) *DomainMappingDeleteO
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *DomainMappingClient) DeleteOneID(id int) *DomainMappingDeleteOne {
+func (c *DomainMappingClient) DeleteOneID(id int32) *DomainMappingDeleteOne {
 	builder := c.Delete().Where(domainmapping.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -302,12 +302,12 @@ func (c *DomainMappingClient) Query() *DomainMappingQuery {
 }
 
 // Get returns a DomainMapping entity by its id.
-func (c *DomainMappingClient) Get(ctx context.Context, id int) (*DomainMapping, error) {
+func (c *DomainMappingClient) Get(ctx context.Context, id int32) (*DomainMapping, error) {
 	return c.Query().Where(domainmapping.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *DomainMappingClient) GetX(ctx context.Context, id int) *DomainMapping {
+func (c *DomainMappingClient) GetX(ctx context.Context, id int32) *DomainMapping {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -401,7 +401,7 @@ func (c *TenantClient) UpdateOne(t *Tenant) *TenantUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *TenantClient) UpdateOneID(id int) *TenantUpdateOne {
+func (c *TenantClient) UpdateOneID(id int32) *TenantUpdateOne {
 	mutation := newTenantMutation(c.config, OpUpdateOne, withTenantID(id))
 	return &TenantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -418,7 +418,7 @@ func (c *TenantClient) DeleteOne(t *Tenant) *TenantDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *TenantClient) DeleteOneID(id int) *TenantDeleteOne {
+func (c *TenantClient) DeleteOneID(id int32) *TenantDeleteOne {
 	builder := c.Delete().Where(tenant.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -435,12 +435,12 @@ func (c *TenantClient) Query() *TenantQuery {
 }
 
 // Get returns a Tenant entity by its id.
-func (c *TenantClient) Get(ctx context.Context, id int) (*Tenant, error) {
+func (c *TenantClient) Get(ctx context.Context, id int32) (*Tenant, error) {
 	return c.Query().Where(tenant.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *TenantClient) GetX(ctx context.Context, id int) *Tenant {
+func (c *TenantClient) GetX(ctx context.Context, id int32) *Tenant {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

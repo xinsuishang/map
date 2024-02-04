@@ -3,8 +3,8 @@ namespace go gpt
 include "../base/common.thrift"
 
 struct ApplicationReq {
-    1: i32 modelId (vt.gt = "0")
-    2: string sessionId (vt.min_size = "5", vt.max_size = "100")
+    1: i32 modelId (vt.ge = "1")
+    2: string sessionId
     3: string prompt (vt.min_size = "1", vt.max_size = "2000")
 }
 
@@ -21,6 +21,11 @@ struct ApplicationListReq {
     3: common.Page page
 }
 
+struct ApplicationListResp {
+    1: list<ApplicationInfo> list
+    2: common.Page page
+}
+
 struct ApplicationInfo {
     1: i32 modelId
     2: i32 parentId
@@ -29,11 +34,6 @@ struct ApplicationInfo {
     5: bool isApplication
     6: string dashboard
     7: string desc
-}
-
-struct ApplicationListResp {
-    1: list<ApplicationInfo> list
-    2: common.Page page
 }
 
 service ChatService {

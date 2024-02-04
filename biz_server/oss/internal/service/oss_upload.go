@@ -29,12 +29,6 @@ func NewOssUploadService(ctx context.Context, repository usecase.Repository) *Os
 
 func (s *OssUploadService) Run(req *oss.UploadRequest) (resp *oss.OssUploadResp, err error) {
 	klog.CtxInfof(s.ctx, "OssUploadService Run req: %+v", req)
-	err = req.IsValid()
-	if err != nil {
-		klog.CtxWarnf(s.ctx, "OssUploadService Run req valid err %+v", err)
-		err = errors.NewErrNo(errors.ParamErrCode, err.Error())
-		return
-	}
 	_, err = os.Stat(req.FileName)
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "OssUploadService Run file stat err: %+v", err)
@@ -69,7 +63,7 @@ func (s *OssUploadService) Run(req *oss.UploadRequest) (resp *oss.OssUploadResp,
 		err = errors.NewErrNo(errors.ServiceErrCode, err.Error())
 		return
 	}
-	resp = new(oss.OssUploadResp)
+	resp = oss.NewOssUploadResp()
 	resp.RemoteUrl = path.Join(mapping.Domain, remote)
 	return
 }

@@ -35,14 +35,14 @@ func (dmu *DomainMappingUpdate) SetUpdatedAt(t time.Time) *DomainMappingUpdate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (dmu *DomainMappingUpdate) SetTenantID(i int) *DomainMappingUpdate {
+func (dmu *DomainMappingUpdate) SetTenantID(i int32) *DomainMappingUpdate {
 	dmu.mutation.ResetTenantID()
 	dmu.mutation.SetTenantID(i)
 	return dmu
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (dmu *DomainMappingUpdate) SetNillableTenantID(i *int) *DomainMappingUpdate {
+func (dmu *DomainMappingUpdate) SetNillableTenantID(i *int32) *DomainMappingUpdate {
 	if i != nil {
 		dmu.SetTenantID(*i)
 	}
@@ -50,7 +50,7 @@ func (dmu *DomainMappingUpdate) SetNillableTenantID(i *int) *DomainMappingUpdate
 }
 
 // AddTenantID adds i to the "tenant_id" field.
-func (dmu *DomainMappingUpdate) AddTenantID(i int) *DomainMappingUpdate {
+func (dmu *DomainMappingUpdate) AddTenantID(i int32) *DomainMappingUpdate {
 	dmu.mutation.AddTenantID(i)
 	return dmu
 }
@@ -153,7 +153,7 @@ func (dmu *DomainMappingUpdate) defaults() {
 }
 
 func (dmu *DomainMappingUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(domainmapping.Table, domainmapping.Columns, sqlgraph.NewFieldSpec(domainmapping.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(domainmapping.Table, domainmapping.Columns, sqlgraph.NewFieldSpec(domainmapping.FieldID, field.TypeInt32))
 	if ps := dmu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -165,10 +165,10 @@ func (dmu *DomainMappingUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		_spec.SetField(domainmapping.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := dmu.mutation.TenantID(); ok {
-		_spec.SetField(domainmapping.FieldTenantID, field.TypeInt, value)
+		_spec.SetField(domainmapping.FieldTenantID, field.TypeInt32, value)
 	}
 	if value, ok := dmu.mutation.AddedTenantID(); ok {
-		_spec.AddField(domainmapping.FieldTenantID, field.TypeInt, value)
+		_spec.AddField(domainmapping.FieldTenantID, field.TypeInt32, value)
 	}
 	if value, ok := dmu.mutation.RegionID(); ok {
 		_spec.SetField(domainmapping.FieldRegionID, field.TypeString, value)
@@ -209,14 +209,14 @@ func (dmuo *DomainMappingUpdateOne) SetUpdatedAt(t time.Time) *DomainMappingUpda
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (dmuo *DomainMappingUpdateOne) SetTenantID(i int) *DomainMappingUpdateOne {
+func (dmuo *DomainMappingUpdateOne) SetTenantID(i int32) *DomainMappingUpdateOne {
 	dmuo.mutation.ResetTenantID()
 	dmuo.mutation.SetTenantID(i)
 	return dmuo
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (dmuo *DomainMappingUpdateOne) SetNillableTenantID(i *int) *DomainMappingUpdateOne {
+func (dmuo *DomainMappingUpdateOne) SetNillableTenantID(i *int32) *DomainMappingUpdateOne {
 	if i != nil {
 		dmuo.SetTenantID(*i)
 	}
@@ -224,7 +224,7 @@ func (dmuo *DomainMappingUpdateOne) SetNillableTenantID(i *int) *DomainMappingUp
 }
 
 // AddTenantID adds i to the "tenant_id" field.
-func (dmuo *DomainMappingUpdateOne) AddTenantID(i int) *DomainMappingUpdateOne {
+func (dmuo *DomainMappingUpdateOne) AddTenantID(i int32) *DomainMappingUpdateOne {
 	dmuo.mutation.AddTenantID(i)
 	return dmuo
 }
@@ -340,7 +340,7 @@ func (dmuo *DomainMappingUpdateOne) defaults() {
 }
 
 func (dmuo *DomainMappingUpdateOne) sqlSave(ctx context.Context) (_node *DomainMapping, err error) {
-	_spec := sqlgraph.NewUpdateSpec(domainmapping.Table, domainmapping.Columns, sqlgraph.NewFieldSpec(domainmapping.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(domainmapping.Table, domainmapping.Columns, sqlgraph.NewFieldSpec(domainmapping.FieldID, field.TypeInt32))
 	id, ok := dmuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "DomainMapping.id" for update`)}
@@ -369,10 +369,10 @@ func (dmuo *DomainMappingUpdateOne) sqlSave(ctx context.Context) (_node *DomainM
 		_spec.SetField(domainmapping.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := dmuo.mutation.TenantID(); ok {
-		_spec.SetField(domainmapping.FieldTenantID, field.TypeInt, value)
+		_spec.SetField(domainmapping.FieldTenantID, field.TypeInt32, value)
 	}
 	if value, ok := dmuo.mutation.AddedTenantID(); ok {
-		_spec.AddField(domainmapping.FieldTenantID, field.TypeInt, value)
+		_spec.AddField(domainmapping.FieldTenantID, field.TypeInt32, value)
 	}
 	if value, ok := dmuo.mutation.RegionID(); ok {
 		_spec.SetField(domainmapping.FieldRegionID, field.TypeString, value)

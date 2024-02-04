@@ -5,7 +5,7 @@ Content-Type: application/json
 {
   "body": {
     "weight": 86.9,
-    "fileName": "/Users/danggui/Downloads/IMG_7341.JPG",
+    "fileName": "/Users/danggui/Downloads/IMG_734",
     "remoteName": "20240109.JPG",
     "forceUpload": false,
     "dateTime": "2024-01-09"
@@ -16,3 +16,28 @@ GET http://localhost:8080/ping
 
 ### 获取gateway接口列表
 GET http://localhost:8080/gateway/mtop/api/list
+
+### applicationList
+POST http://localhost:8080/gateway/mtop/gpt/application/list
+Content-Type: application/json
+
+{
+  "body": {
+    "page" : {
+      "pageNo" : 1,
+      "pageSize" : 10
+    }
+  }
+}
+
+### chat
+POST http://localhost:8080/gateway/mtop/gpt/application/chat
+Content-Type: application/json
+
+{
+  "body": {
+    "modelId" : 2,
+    "sessionId": "c6d15b75f7e3438e89eda32bd879953f",
+    "prompt" : "这是我们的第几次对话"
+  }
+}

@@ -40,7 +40,7 @@ func (dmd *DomainMappingDelete) ExecX(ctx context.Context) int {
 }
 
 func (dmd *DomainMappingDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(domainmapping.Table, sqlgraph.NewFieldSpec(domainmapping.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewDeleteSpec(domainmapping.Table, sqlgraph.NewFieldSpec(domainmapping.FieldID, field.TypeInt32))
 	if ps := dmd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

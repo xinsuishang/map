@@ -84,6 +84,12 @@ func (tc *TenantCreate) SetDesc(s string) *TenantCreate {
 	return tc
 }
 
+// SetID sets the "id" field.
+func (tc *TenantCreate) SetID(i int32) *TenantCreate {
+	tc.mutation.SetID(i)
+	return tc
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (tc *TenantCreate) Mutation() *TenantMutation {
 	return tc.mutation
@@ -155,6 +161,11 @@ func (tc *TenantCreate) check() error {
 	if _, ok := tc.mutation.Desc(); !ok {
 		return &ValidationError{Name: "desc", err: errors.New(`ent: missing required field "Tenant.desc"`)}
 	}
+	if v, ok := tc.mutation.ID(); ok {
+		if err := tenant.IDValidator(v); err != nil {
+			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "Tenant.id": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -169,8 +180,10 @@ func (tc *TenantCreate) sqlSave(ctx context.Context) (*Tenant, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int32(id)
+	}
 	tc.mutation.id = &_node.ID
 	tc.mutation.done = true
 	return _node, nil
@@ -179,8 +192,12 @@ func (tc *TenantCreate) sqlSave(ctx context.Context) (*Tenant, error) {
 func (tc *TenantCreate) createSpec() (*Tenant, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Tenant{config: tc.config}
-		_spec = sqlgraph.NewCreateSpec(tenant.Table, sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(tenant.Table, sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt32))
 	)
+	if id, ok := tc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := tc.mutation.CreatedAt(); ok {
 		_spec.SetField(tenant.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -261,9 +278,9 @@ func (tcb *TenantCreateBulk) Save(ctx context.Context) ([]*Tenant, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = int32(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

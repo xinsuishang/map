@@ -12,6 +12,10 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// Chat is the client for interacting with the Chat builders.
+	Chat *ChatClient
+	// ChatMessage is the client for interacting with the ChatMessage builders.
+	ChatMessage *ChatMessageClient
 	// Tenant is the client for interacting with the Tenant builders.
 	Tenant *TenantClient
 
@@ -145,6 +149,8 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.Chat = NewChatClient(tx.config)
+	tx.ChatMessage = NewChatMessageClient(tx.config)
 	tx.Tenant = NewTenantClient(tx.config)
 }
 
@@ -155,7 +161,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Tenant.QueryXXX(), the query will be executed
+// applies a query, for example: Chat.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

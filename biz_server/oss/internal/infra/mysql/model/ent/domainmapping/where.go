@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.DomainMapping {
+func ID(id int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.DomainMapping {
+func IDEQ(id int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.DomainMapping {
+func IDNEQ(id int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.DomainMapping {
+func IDIn(ids ...int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.DomainMapping {
+func IDNotIn(ids ...int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.DomainMapping {
+func IDGT(id int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.DomainMapping {
+func IDGTE(id int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.DomainMapping {
+func IDLT(id int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.DomainMapping {
+func IDLTE(id int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldLTE(FieldID, id))
 }
 
@@ -65,7 +65,7 @@ func UpdatedAt(v time.Time) predicate.DomainMapping {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v int) predicate.DomainMapping {
+func TenantID(v int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -170,42 +170,42 @@ func UpdatedAtLTE(v time.Time) predicate.DomainMapping {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v int) predicate.DomainMapping {
+func TenantIDEQ(v int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v int) predicate.DomainMapping {
+func TenantIDNEQ(v int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...int) predicate.DomainMapping {
+func TenantIDIn(vs ...int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...int) predicate.DomainMapping {
+func TenantIDNotIn(vs ...int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v int) predicate.DomainMapping {
+func TenantIDGT(v int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v int) predicate.DomainMapping {
+func TenantIDGTE(v int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v int) predicate.DomainMapping {
+func TenantIDLT(v int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v int) predicate.DomainMapping {
+func TenantIDLTE(v int32) predicate.DomainMapping {
 	return predicate.DomainMapping(sql.FieldLTE(FieldTenantID, v))
 }
 

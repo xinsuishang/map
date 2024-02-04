@@ -11,6 +11,8 @@ import (
 
 	"msp/biz_server/gpt/internal/infra/mysql/model/ent/migrate"
 
+	"msp/biz_server/gpt/internal/infra/mysql/model/ent/chat"
+	"msp/biz_server/gpt/internal/infra/mysql/model/ent/chatmessage"
 	"msp/biz_server/gpt/internal/infra/mysql/model/ent/tenant"
 
 	"entgo.io/ent"
@@ -23,6 +25,10 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Chat is the client for interacting with the Chat builders.
+	Chat *ChatClient
+	// ChatMessage is the client for interacting with the ChatMessage builders.
+	ChatMessage *ChatMessageClient
 	// Tenant is the client for interacting with the Tenant builders.
 	Tenant *TenantClient
 }
@@ -36,6 +42,8 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Chat = NewChatClient(c.config)
+	c.ChatMessage = NewChatMessageClient(c.config)
 	c.Tenant = NewTenantClient(c.config)
 }
 
@@ -127,9 +135,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:    ctx,
-		config: cfg,
-		Tenant: NewTenantClient(cfg),
+		ctx:         ctx,
+		config:      cfg,
+		Chat:        NewChatClient(cfg),
+		ChatMessage: NewChatMessageClient(cfg),
+		Tenant:      NewTenantClient(cfg),
 	}, nil
 }
 
@@ -147,16 +157,18 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:    ctx,
-		config: cfg,
-		Tenant: NewTenantClient(cfg),
+		ctx:         ctx,
+		config:      cfg,
+		Chat:        NewChatClient(cfg),
+		ChatMessage: NewChatMessageClient(cfg),
+		Tenant:      NewTenantClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Tenant.
+//		Chat.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -178,22 +190,296 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.Chat.Use(hooks...)
+	c.ChatMessage.Use(hooks...)
 	c.Tenant.Use(hooks...)
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
+	c.Chat.Intercept(interceptors...)
+	c.ChatMessage.Intercept(interceptors...)
 	c.Tenant.Intercept(interceptors...)
 }
 
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *ChatMutation:
+		return c.Chat.mutate(ctx, m)
+	case *ChatMessageMutation:
+		return c.ChatMessage.mutate(ctx, m)
 	case *TenantMutation:
 		return c.Tenant.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
+	}
+}
+
+// ChatClient is a client for the Chat schema.
+type ChatClient struct {
+	config
+}
+
+// NewChatClient returns a client for the Chat from the given config.
+func NewChatClient(c config) *ChatClient {
+	return &ChatClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `chat.Hooks(f(g(h())))`.
+func (c *ChatClient) Use(hooks ...Hook) {
+	c.hooks.Chat = append(c.hooks.Chat, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `chat.Intercept(f(g(h())))`.
+func (c *ChatClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Chat = append(c.inters.Chat, interceptors...)
+}
+
+// Create returns a builder for creating a Chat entity.
+func (c *ChatClient) Create() *ChatCreate {
+	mutation := newChatMutation(c.config, OpCreate)
+	return &ChatCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Chat entities.
+func (c *ChatClient) CreateBulk(builders ...*ChatCreate) *ChatCreateBulk {
+	return &ChatCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ChatClient) MapCreateBulk(slice any, setFunc func(*ChatCreate, int)) *ChatCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ChatCreateBulk{err: fmt.Errorf("calling to ChatClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ChatCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ChatCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Chat.
+func (c *ChatClient) Update() *ChatUpdate {
+	mutation := newChatMutation(c.config, OpUpdate)
+	return &ChatUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ChatClient) UpdateOne(ch *Chat) *ChatUpdateOne {
+	mutation := newChatMutation(c.config, OpUpdateOne, withChat(ch))
+	return &ChatUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ChatClient) UpdateOneID(id int32) *ChatUpdateOne {
+	mutation := newChatMutation(c.config, OpUpdateOne, withChatID(id))
+	return &ChatUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Chat.
+func (c *ChatClient) Delete() *ChatDelete {
+	mutation := newChatMutation(c.config, OpDelete)
+	return &ChatDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ChatClient) DeleteOne(ch *Chat) *ChatDeleteOne {
+	return c.DeleteOneID(ch.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ChatClient) DeleteOneID(id int32) *ChatDeleteOne {
+	builder := c.Delete().Where(chat.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ChatDeleteOne{builder}
+}
+
+// Query returns a query builder for Chat.
+func (c *ChatClient) Query() *ChatQuery {
+	return &ChatQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeChat},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Chat entity by its id.
+func (c *ChatClient) Get(ctx context.Context, id int32) (*Chat, error) {
+	return c.Query().Where(chat.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ChatClient) GetX(ctx context.Context, id int32) *Chat {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ChatClient) Hooks() []Hook {
+	return c.hooks.Chat
+}
+
+// Interceptors returns the client interceptors.
+func (c *ChatClient) Interceptors() []Interceptor {
+	return c.inters.Chat
+}
+
+func (c *ChatClient) mutate(ctx context.Context, m *ChatMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ChatCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ChatUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ChatUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ChatDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Chat mutation op: %q", m.Op())
+	}
+}
+
+// ChatMessageClient is a client for the ChatMessage schema.
+type ChatMessageClient struct {
+	config
+}
+
+// NewChatMessageClient returns a client for the ChatMessage from the given config.
+func NewChatMessageClient(c config) *ChatMessageClient {
+	return &ChatMessageClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `chatmessage.Hooks(f(g(h())))`.
+func (c *ChatMessageClient) Use(hooks ...Hook) {
+	c.hooks.ChatMessage = append(c.hooks.ChatMessage, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `chatmessage.Intercept(f(g(h())))`.
+func (c *ChatMessageClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ChatMessage = append(c.inters.ChatMessage, interceptors...)
+}
+
+// Create returns a builder for creating a ChatMessage entity.
+func (c *ChatMessageClient) Create() *ChatMessageCreate {
+	mutation := newChatMessageMutation(c.config, OpCreate)
+	return &ChatMessageCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ChatMessage entities.
+func (c *ChatMessageClient) CreateBulk(builders ...*ChatMessageCreate) *ChatMessageCreateBulk {
+	return &ChatMessageCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ChatMessageClient) MapCreateBulk(slice any, setFunc func(*ChatMessageCreate, int)) *ChatMessageCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ChatMessageCreateBulk{err: fmt.Errorf("calling to ChatMessageClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ChatMessageCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ChatMessageCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ChatMessage.
+func (c *ChatMessageClient) Update() *ChatMessageUpdate {
+	mutation := newChatMessageMutation(c.config, OpUpdate)
+	return &ChatMessageUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ChatMessageClient) UpdateOne(cm *ChatMessage) *ChatMessageUpdateOne {
+	mutation := newChatMessageMutation(c.config, OpUpdateOne, withChatMessage(cm))
+	return &ChatMessageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ChatMessageClient) UpdateOneID(id int32) *ChatMessageUpdateOne {
+	mutation := newChatMessageMutation(c.config, OpUpdateOne, withChatMessageID(id))
+	return &ChatMessageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ChatMessage.
+func (c *ChatMessageClient) Delete() *ChatMessageDelete {
+	mutation := newChatMessageMutation(c.config, OpDelete)
+	return &ChatMessageDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ChatMessageClient) DeleteOne(cm *ChatMessage) *ChatMessageDeleteOne {
+	return c.DeleteOneID(cm.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ChatMessageClient) DeleteOneID(id int32) *ChatMessageDeleteOne {
+	builder := c.Delete().Where(chatmessage.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ChatMessageDeleteOne{builder}
+}
+
+// Query returns a query builder for ChatMessage.
+func (c *ChatMessageClient) Query() *ChatMessageQuery {
+	return &ChatMessageQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeChatMessage},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ChatMessage entity by its id.
+func (c *ChatMessageClient) Get(ctx context.Context, id int32) (*ChatMessage, error) {
+	return c.Query().Where(chatmessage.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ChatMessageClient) GetX(ctx context.Context, id int32) *ChatMessage {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ChatMessageClient) Hooks() []Hook {
+	return c.hooks.ChatMessage
+}
+
+// Interceptors returns the client interceptors.
+func (c *ChatMessageClient) Interceptors() []Interceptor {
+	return c.inters.ChatMessage
+}
+
+func (c *ChatMessageClient) mutate(ctx context.Context, m *ChatMessageMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ChatMessageCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ChatMessageUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ChatMessageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ChatMessageDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ChatMessage mutation op: %q", m.Op())
 	}
 }
 
@@ -258,7 +544,7 @@ func (c *TenantClient) UpdateOne(t *Tenant) *TenantUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *TenantClient) UpdateOneID(id int) *TenantUpdateOne {
+func (c *TenantClient) UpdateOneID(id int32) *TenantUpdateOne {
 	mutation := newTenantMutation(c.config, OpUpdateOne, withTenantID(id))
 	return &TenantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -275,7 +561,7 @@ func (c *TenantClient) DeleteOne(t *Tenant) *TenantDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *TenantClient) DeleteOneID(id int) *TenantDeleteOne {
+func (c *TenantClient) DeleteOneID(id int32) *TenantDeleteOne {
 	builder := c.Delete().Where(tenant.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -292,12 +578,12 @@ func (c *TenantClient) Query() *TenantQuery {
 }
 
 // Get returns a Tenant entity by its id.
-func (c *TenantClient) Get(ctx context.Context, id int) (*Tenant, error) {
+func (c *TenantClient) Get(ctx context.Context, id int32) (*Tenant, error) {
 	return c.Query().Where(tenant.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *TenantClient) GetX(ctx context.Context, id int) *Tenant {
+func (c *TenantClient) GetX(ctx context.Context, id int32) *Tenant {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -333,9 +619,9 @@ func (c *TenantClient) mutate(ctx context.Context, m *TenantMutation) (Value, er
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Tenant []ent.Hook
+		Chat, ChatMessage, Tenant []ent.Hook
 	}
 	inters struct {
-		Tenant []ent.Interceptor
+		Chat, ChatMessage, Tenant []ent.Interceptor
 	}
 )

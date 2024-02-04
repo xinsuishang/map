@@ -5,7 +5,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hashicorp/consul/api"
 	"github.com/spf13/viper"
-	"msp/biz_server/oss/config"
+	"msp/biz_server/gpt/config"
 	"msp/common/simpleutils"
 	"net"
 	"strconv"

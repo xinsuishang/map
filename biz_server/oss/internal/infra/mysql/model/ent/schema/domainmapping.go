@@ -12,7 +12,7 @@ type DomainMapping struct {
 	ent.Schema
 }
 
-// Annotations of the User.
+// Annotations of the DomainMapping.
 func (DomainMapping) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entsql.Annotation{Table: "domain_mapping"},
@@ -22,7 +22,8 @@ func (DomainMapping) Annotations() []schema.Annotation {
 // Fields of the DomainMapping.
 func (DomainMapping) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("tenant_id").Unique(),
+		field.Int32("id").Positive(),
+		field.Int32("tenant_id").Unique(),
 		field.String("region_id"),
 		field.String("domain"),
 		field.String("bucket_name"),

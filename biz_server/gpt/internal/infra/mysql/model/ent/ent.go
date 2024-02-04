@@ -6,6 +6,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"msp/biz_server/gpt/internal/infra/mysql/model/ent/chat"
+	"msp/biz_server/gpt/internal/infra/mysql/model/ent/chatmessage"
 	"msp/biz_server/gpt/internal/infra/mysql/model/ent/tenant"
 	"reflect"
 	"sync"
@@ -73,7 +75,9 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			tenant.Table: tenant.ValidColumn,
+			chat.Table:        chat.ValidColumn,
+			chatmessage.Table: chatmessage.ValidColumn,
+			tenant.Table:      tenant.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

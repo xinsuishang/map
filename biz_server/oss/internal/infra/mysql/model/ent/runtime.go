@@ -28,6 +28,10 @@ func init() {
 	domainmapping.DefaultUpdatedAt = domainmappingDescUpdatedAt.Default.(func() time.Time)
 	// domainmapping.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	domainmapping.UpdateDefaultUpdatedAt = domainmappingDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// domainmappingDescID is the schema descriptor for id field.
+	domainmappingDescID := domainmappingFields[0].Descriptor()
+	// domainmapping.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	domainmapping.IDValidator = domainmappingDescID.Validators[0].(func(int32) error)
 	tenantMixin := schema.Tenant{}.Mixin()
 	tenantMixinFields0 := tenantMixin[0].Fields()
 	_ = tenantMixinFields0
@@ -43,4 +47,8 @@ func init() {
 	tenant.DefaultUpdatedAt = tenantDescUpdatedAt.Default.(func() time.Time)
 	// tenant.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	tenant.UpdateDefaultUpdatedAt = tenantDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// tenantDescID is the schema descriptor for id field.
+	tenantDescID := tenantFields[0].Descriptor()
+	// tenant.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	tenant.IDValidator = tenantDescID.Validators[0].(func(int32) error)
 }

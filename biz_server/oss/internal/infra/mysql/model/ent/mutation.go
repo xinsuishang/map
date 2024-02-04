@@ -34,11 +34,11 @@ type DomainMappingMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int
+	id            *int32
 	created_at    *time.Time
 	updated_at    *time.Time
-	tenant_id     *int
-	addtenant_id  *int
+	tenant_id     *int32
+	addtenant_id  *int32
 	region_id     *string
 	domain        *string
 	bucket_name   *string
@@ -69,7 +69,7 @@ func newDomainMappingMutation(c config, op Op, opts ...domainmappingOption) *Dom
 }
 
 // withDomainMappingID sets the ID field of the mutation.
-func withDomainMappingID(id int) domainmappingOption {
+func withDomainMappingID(id int32) domainmappingOption {
 	return func(m *DomainMappingMutation) {
 		var (
 			err   error
@@ -119,9 +119,15 @@ func (m DomainMappingMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of DomainMapping entities.
+func (m *DomainMappingMutation) SetID(id int32) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *DomainMappingMutation) ID() (id int, exists bool) {
+func (m *DomainMappingMutation) ID() (id int32, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -132,12 +138,12 @@ func (m *DomainMappingMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *DomainMappingMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *DomainMappingMutation) IDs(ctx context.Context) ([]int32, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []int32{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -220,13 +226,13 @@ func (m *DomainMappingMutation) ResetUpdatedAt() {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (m *DomainMappingMutation) SetTenantID(i int) {
+func (m *DomainMappingMutation) SetTenantID(i int32) {
 	m.tenant_id = &i
 	m.addtenant_id = nil
 }
 
 // TenantID returns the value of the "tenant_id" field in the mutation.
-func (m *DomainMappingMutation) TenantID() (r int, exists bool) {
+func (m *DomainMappingMutation) TenantID() (r int32, exists bool) {
 	v := m.tenant_id
 	if v == nil {
 		return
@@ -237,7 +243,7 @@ func (m *DomainMappingMutation) TenantID() (r int, exists bool) {
 // OldTenantID returns the old "tenant_id" field's value of the DomainMapping entity.
 // If the DomainMapping object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DomainMappingMutation) OldTenantID(ctx context.Context) (v int, err error) {
+func (m *DomainMappingMutation) OldTenantID(ctx context.Context) (v int32, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
 	}
@@ -252,7 +258,7 @@ func (m *DomainMappingMutation) OldTenantID(ctx context.Context) (v int, err err
 }
 
 // AddTenantID adds i to the "tenant_id" field.
-func (m *DomainMappingMutation) AddTenantID(i int) {
+func (m *DomainMappingMutation) AddTenantID(i int32) {
 	if m.addtenant_id != nil {
 		*m.addtenant_id += i
 	} else {
@@ -261,7 +267,7 @@ func (m *DomainMappingMutation) AddTenantID(i int) {
 }
 
 // AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
-func (m *DomainMappingMutation) AddedTenantID() (r int, exists bool) {
+func (m *DomainMappingMutation) AddedTenantID() (r int32, exists bool) {
 	v := m.addtenant_id
 	if v == nil {
 		return
@@ -544,7 +550,7 @@ func (m *DomainMappingMutation) SetField(name string, value ent.Value) error {
 		m.SetUpdatedAt(v)
 		return nil
 	case domainmapping.FieldTenantID:
-		v, ok := value.(int)
+		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -609,7 +615,7 @@ func (m *DomainMappingMutation) AddedField(name string) (ent.Value, bool) {
 func (m *DomainMappingMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	case domainmapping.FieldTenantID:
-		v, ok := value.(int)
+		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -720,7 +726,7 @@ type TenantMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int
+	id            *int32
 	created_at    *time.Time
 	updated_at    *time.Time
 	name          *string
@@ -755,7 +761,7 @@ func newTenantMutation(c config, op Op, opts ...tenantOption) *TenantMutation {
 }
 
 // withTenantID sets the ID field of the mutation.
-func withTenantID(id int) tenantOption {
+func withTenantID(id int32) tenantOption {
 	return func(m *TenantMutation) {
 		var (
 			err   error
@@ -805,9 +811,15 @@ func (m TenantMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Tenant entities.
+func (m *TenantMutation) SetID(id int32) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *TenantMutation) ID() (id int, exists bool) {
+func (m *TenantMutation) ID() (id int32, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -818,12 +830,12 @@ func (m *TenantMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *TenantMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *TenantMutation) IDs(ctx context.Context) ([]int32, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []int32{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):

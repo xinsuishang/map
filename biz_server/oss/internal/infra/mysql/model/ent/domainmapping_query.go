@@ -81,8 +81,8 @@ func (dmq *DomainMappingQuery) FirstX(ctx context.Context) *DomainMapping {
 
 // FirstID returns the first DomainMapping ID from the query.
 // Returns a *NotFoundError when no DomainMapping ID was found.
-func (dmq *DomainMappingQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (dmq *DomainMappingQuery) FirstID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = dmq.Limit(1).IDs(setContextOp(ctx, dmq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -94,7 +94,7 @@ func (dmq *DomainMappingQuery) FirstID(ctx context.Context) (id int, err error) 
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (dmq *DomainMappingQuery) FirstIDX(ctx context.Context) int {
+func (dmq *DomainMappingQuery) FirstIDX(ctx context.Context) int32 {
 	id, err := dmq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -132,8 +132,8 @@ func (dmq *DomainMappingQuery) OnlyX(ctx context.Context) *DomainMapping {
 // OnlyID is like Only, but returns the only DomainMapping ID in the query.
 // Returns a *NotSingularError when more than one DomainMapping ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (dmq *DomainMappingQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (dmq *DomainMappingQuery) OnlyID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = dmq.Limit(2).IDs(setContextOp(ctx, dmq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -149,7 +149,7 @@ func (dmq *DomainMappingQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (dmq *DomainMappingQuery) OnlyIDX(ctx context.Context) int {
+func (dmq *DomainMappingQuery) OnlyIDX(ctx context.Context) int32 {
 	id, err := dmq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -177,7 +177,7 @@ func (dmq *DomainMappingQuery) AllX(ctx context.Context) []*DomainMapping {
 }
 
 // IDs executes the query and returns a list of DomainMapping IDs.
-func (dmq *DomainMappingQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (dmq *DomainMappingQuery) IDs(ctx context.Context) (ids []int32, err error) {
 	if dmq.ctx.Unique == nil && dmq.path != nil {
 		dmq.Unique(true)
 	}
@@ -189,7 +189,7 @@ func (dmq *DomainMappingQuery) IDs(ctx context.Context) (ids []int, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (dmq *DomainMappingQuery) IDsX(ctx context.Context) []int {
+func (dmq *DomainMappingQuery) IDsX(ctx context.Context) []int32 {
 	ids, err := dmq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -364,7 +364,7 @@ func (dmq *DomainMappingQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (dmq *DomainMappingQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(domainmapping.Table, domainmapping.Columns, sqlgraph.NewFieldSpec(domainmapping.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(domainmapping.Table, domainmapping.Columns, sqlgraph.NewFieldSpec(domainmapping.FieldID, field.TypeInt32))
 	_spec.From = dmq.sql
 	if unique := dmq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

@@ -12,7 +12,7 @@ type Tenant struct {
 	ent.Schema
 }
 
-// Annotations of the User.
+// Annotations of the Tenant.
 func (Tenant) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entsql.Annotation{Table: "tenants"},
@@ -22,6 +22,7 @@ func (Tenant) Annotations() []schema.Annotation {
 // Fields of the Tenant.
 func (Tenant) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int32("id").Positive(),
 		field.String("name"),
 		field.Bool("region"),
 		field.String("type"),
