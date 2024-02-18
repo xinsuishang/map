@@ -6,8 +6,9 @@ struct WeightUploadRequest {
     1: double weight (vt.gt = "0.0", vt.lt = "200.0")
     2: string fileName (vt.min_size = "5", vt.max_size = "100", vt.suffix=".JPG")
     3: string remoteName (vt.min_size = "5", vt.max_size = "100", vt.suffix=".JPG")
-    4: bool forceUpload
-    5: string dateTime (vt.min_size = "10", vt.max_size = "10")
+    4: string title (vt.min_size = "1", vt.max_size = "100")
+    5: bool forceUpload
+    6: string dateTime (vt.min_size = "10", vt.max_size = "10")
 }
 
 struct NotionUploadRequest {
@@ -15,6 +16,7 @@ struct NotionUploadRequest {
     2: string dateTime (vt.min_size = "10", vt.max_size = "10")
     3: double weight (vt.gt = "0.0", vt.lt = "200.0")
     4: string fileUrl (vt.min_size = "1", vt.max_size = "100")
+    5: string title (vt.min_size = "1", vt.max_size = "100")
 }
 
 struct UploadRequest {

@@ -50,14 +50,18 @@ func (p *repository) GetTenantsById(ctx context.Context, id int32) (*entity.Tena
 	}
 	return convertTenant(get), nil
 }
-func (p *repository) GetCacheTenantsAndParentById(ctx context.Context, id int32) (*entity.TenantEntity, *entity.TenantEntity, error) {
 
-	cacheEntity, err := getFromTenantCache(id)
+func (p *repository) GetCacheTenantById(ctx context.Context, id int32) (*entity.TenantEntity, error) {
+	return getFromTenantCache(id)
+}
+
+func (p *repository) GetCacheTenantAndParentById(ctx context.Context, id int32) (*entity.TenantEntity, *entity.TenantEntity, error) {
+	cacheEntity, err := p.GetCacheTenantById(ctx, id)
 	if cacheEntity == nil || err != nil {
 		return cacheEntity, nil, err
 	}
 	parentId := cacheEntity.ParentId
-	parentEntity, err := getFromTenantCache(parentId)
+	parentEntity, err := p.GetCacheTenantById(ctx, parentId)
 	return cacheEntity, parentEntity, err
 }
 

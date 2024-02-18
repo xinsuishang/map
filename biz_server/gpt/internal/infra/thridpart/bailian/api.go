@@ -1,15 +1,19 @@
 package bailian
 
 import (
+	"context"
 	"errors"
 	client "github.com/aliyun/alibabacloud-bailian-go-sdk/client"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
-func CreateCompletion(modelId int32, requestId, sessionId, prompt string) (string, error) {
+func CreateCompletion(ctx context.Context, modelId int32, requestId, sessionId, prompt string) (string, error) {
 	tokenClient, err := getToken(modelId)
 	if err != nil {
 		return "", err
+	}
+	if tokenClient.IsDeleted {
+		return "", errors.New("application is deleted")
 	}
 	token, err := tokenClient.GetToken()
 	klog.Infof("expiretTime %d", tokenClient.TokenData.ExpiredTime)

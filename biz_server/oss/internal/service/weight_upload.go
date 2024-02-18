@@ -24,7 +24,7 @@ func NewWeightUploadService(ctx context.Context, repository usecase.Repository) 
 func (s *WeightUploadService) Run(req *oss.WeightUploadRequest) (resp *common.EmptyResponse, err error) {
 	klog.CtxInfof(s.ctx, "WeightUploadService Run req: %+v", req)
 	uploadService := NewOssUploadService(s.ctx, s.repository)
-	uploadResp, err := uploadService.Run(convert.WeightToOssReq(req, "v20230207", 1))
+	uploadResp, err := uploadService.Run(convert.WeightToOssReq(req, 1))
 	if err != nil {
 		err = errors.NewErrNo(errors.ServiceErrCode, err.Error())
 		return

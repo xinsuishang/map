@@ -7,8 +7,12 @@ import (
 
 // Repository 资源操作接口定义
 type Repository interface {
+	WithTx(ctx context.Context) (Repository, error)
+	TxRollback() error
+	TxCommit() error
+
 	GetTenantsById(ctx context.Context, id int32) (*entity.TenantEntity, error)
-	GetCacheTenantsAndParentById(ctx context.Context, id int32) (*entity.TenantEntity, *entity.TenantEntity, error)
+	GetCacheTenantAndParentById(ctx context.Context, id int32) (*entity.TenantEntity, *entity.TenantEntity, error)
 	GetTenantList(ctx context.Context, modelId, parentId, pageNo, pageSize int32) ([]*entity.TenantEntity, int32, error)
 
 	GetChatCache(ctx context.Context, sessionId string) (*entity.ChatEntity, error)

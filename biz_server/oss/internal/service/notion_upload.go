@@ -47,7 +47,7 @@ func (s *NotionUploadService) Run(req *oss.NotionUploadRequest) (resp *common.Em
 	dataMap["证明"] = *model.NewUrl(req.GetFileUrl())
 	dataMap["当日体重"] = *model.NewNumber(req.GetWeight())
 	dataMap["Files & media"] = *model.NewFiles(req.GetFileUrl())
-	dataMap["批次"] = *model.NewTitles("2023年2月减肥")
+	dataMap["批次"] = *model.NewTitles(req.GetTitle())
 
 	err = s.notionRepository.AddPageToDatabase(tenant.SecretKey, mapping.BucketName, dataMap)
 	if err != nil {
