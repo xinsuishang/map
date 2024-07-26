@@ -68,7 +68,7 @@ func Gateway(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp.Success(realResp.Body)
+	resp.Success(realResp.RawBody)
 }
 
 func GetawayList(ctx context.Context, c *app.RequestContext) {

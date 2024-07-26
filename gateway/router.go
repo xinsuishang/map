@@ -3,7 +3,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/client"
@@ -12,12 +14,16 @@ import (
 	"github.com/cloudwego/kitex/pkg/generic"
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/transport"
+	"github.com/google/uuid"
+	"github.com/hertz-contrib/logger/accesslog"
+	"github.com/hertz-contrib/requestid"
 	consul "github.com/kitex-contrib/registry-consul"
 	"msp/gateway/biz/handler"
 	"msp/gateway/biz/middleware"
 	"msp/gateway/config"
 	"os"
 	"path"
+	"strings"
 )
 
 // customizeRegister registers customize routers.
@@ -30,6 +36,16 @@ func customizedRegister(r *server.Hertz) {
 
 // registerGateway registers the router of gateway
 func registerGateway(r *server.Hertz) {
+	r.Use( // 自定义 request id 生成逻辑
+		requestid.New(
+			requestid.WithGenerator(func(ctx context.Context, c *app.RequestContext) string {
+				return strings.ReplaceAll(uuid.New().String(), "-", "")
+			}),
+			// 自定义 request id 响应头键值
+			requestid.WithCustomHeaderStrKey("X-Trace-Key"),
+		),
+		// 自定义访问日志及格式
+		accesslog.New())
 	group := r.Group("/gateway").Use(middleware.GatewayAuth()...)
 
 	if handler.SvcRouteMap == nil {
@@ -69,7 +85,7 @@ func registerGateway(r *server.Hertz) {
 		providerConnect(route, svrName, fingerPrint, idlPath, includeContent, consulResolver, loadingCacheMap)
 	}
 	group.POST("/*path", handler.Gateway)
-	group.GET("/mtop/api/list", handler.GetawayList)
+	group.GET("/top/api/list", handler.GetawayList)
 
 }
 
@@ -94,12 +110,12 @@ func evalContent(parentPath, idlPath string, includeContent map[string]string) {
 
 func providerConnect(route, svrName, fingerPrint, idlPath string, includes map[string]string, resolver discovery.Resolver, loadingCacheMap map[string]genericclient.Client) {
 
-	provider, err := generic.NewThriftContentProvider(includes[idlPath], includes)
+	provider, err := generic.NewThriftContentProviderWithDynamicGo(includes[idlPath], includes)
 	if err != nil {
 		hlog.Fatalf("new thrift file provider failed: %v", err)
 		return
 	}
-	g, err := generic.HTTPThriftGeneric(provider)
+	g, err := generic.JSONThriftGeneric(provider)
 	if err != nil {
 		hlog.Fatal(err)
 	}

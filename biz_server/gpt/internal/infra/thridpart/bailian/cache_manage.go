@@ -56,7 +56,7 @@ var tokenClientCache = asynccache.NewAsyncCache(asynccache.Options{
 		if err != nil {
 			return nil, err
 		}
-		entityData, parentEntity, err := model.DB.GetCacheTenantsAndParentById(context.Background(), int32(primary))
+		entityData, parentEntity, err := model.DB.GetCacheTenantAndParentById(context.Background(), int32(primary))
 
 		// 根据 app 参数获取 tokenClient
 		cacheData := &accessTokenClient{

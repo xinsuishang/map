@@ -50,7 +50,7 @@ go-mod-upgrade
 
 - 通过 hertz 作为纯网关，泛化调用下游业务服务
 - consul 作为注册中心
-- hertz 遍历idl获取泛化调用服务，暂时无热加载功能，后续尝试迭代
+- hertz 遍历 idl 获取泛化调用服务，暂时无热加载功能，后续尝试迭代
 
 ### biz_server
 
@@ -81,11 +81,19 @@ go-mod-upgrade
 
 ## 实现方式
 
-- 通过 consul 中维护的 gateway_resource定位到具体的接口
+- 通过 consul 中维护的 gateway_resource 定位到具体的接口
 - route 为网关暴露的 http 路由
 - 通过路由，匹配到对应的 finger_print 和 provider
-- 调用provider下的finger_print方法
-- finger_print 方法为idl中service下的api.post
-- 热加载本身不复杂，核心是svrRouteMap修改（未做）
-  - 配置中心触发gateway中的配置更新，删除无效数据，加载新数据到svrRouteMap
-  - idl替换需要有配置管理中心或者将文件写入数据库中
+- 调用 provider 下的 finger_print 方法
+- finger_print 方法为 idl 中 service 下的 api.post
+- 引入 finger_print 是为了后续灵活处理
+    - 多个 route 映射到相同泛化调用方法
+    - 同时后续拆分、升级外部可以无感知（调用 http 方法不变，底层微服务变更）
+- 热加载本身不复杂，核心是 svrRouteMap 修改（未做）
+    - 配置中心触发gateway中的配置更新，删除无效数据，加载新数据到 svrRouteMap
+    - idl替换需要有配置管理中心或者将文件写入数据库中
+
+## 后续计划
+
+- 修改为 Multiple Services 模式。早期kitex仅支持单 server 单 service，现在支持多service了，升级
+- 支持 Reflection 后，跟进升级为不依赖idl的泛化调用

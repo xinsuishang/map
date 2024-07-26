@@ -3,8 +3,8 @@ package initialize
 import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	hertzlogrus "github.com/hertz-contrib/obs-opentelemetry/logging/logrus"
+	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"msp/common/simpleutils"
 	"msp/gateway/config"
 	"os"
 	"path"
@@ -29,8 +29,8 @@ func InitLogger() {
 		}
 	}
 
-	logger := hertzlogrus.NewLogger(
-		hertzlogrus.WithHook(simpleutils.ContextHook{}),
+	logger := hertzlogrus.WithLogger(
+		logrus.StandardLogger(),
 	)
 
 	// Provides compression and deletion
